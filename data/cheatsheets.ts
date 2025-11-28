@@ -445,6 +445,352 @@ const PostList: React.FC<PostListProps> = ({ userId }) => {
 `,
     },
     {
+      title: 'React: Hooks Avançados',
+      content: `
+import React, { useContext, useReducer, useMemo, useCallback, createContext } from 'react';
+
+// useContext - Compartilhar estado entre componentes sem prop drilling
+const TemaContext = createContext('claro');
+
+function App() {
+  return (
+    <TemaContext.Provider value="escuro">
+      <BotaoTema />
+    </TemaContext.Provider>
+  );
+}
+
+function BotaoTema() {
+  const tema = useContext(TemaContext);
+  return <button className={tema}>Tema: {tema}</button>;
+}
+
+// useReducer - Para lógica de estado complexa
+interface Estado { contador: number }
+type Acao = { type: 'incrementar' } | { type: 'decrementar' };
+
+function reducer(estado: Estado, acao: Acao): Estado {
+  switch (acao.type) {
+    case 'incrementar': return { contador: estado.contador + 1 };
+    case 'decrementar': return { contador: estado.contador - 1 };
+    default: return estado;
+  }
+}
+
+function Contador() {
+  const [estado, dispatch] = useReducer(reducer, { contador: 0 });
+  return (
+    <>
+      <span>{estado.contador}</span>
+      <button onClick={() => dispatch({ type: 'incrementar' })}>+</button>
+    </>
+  );
+}
+
+// useMemo - Memorizar valores computados caros
+const valoresOrdenados = useMemo(() => {
+  return valores.sort((a, b) => a - b);
+}, [valores]); // Recalcula apenas quando 'valores' muda
+
+// useCallback - Memorizar funções para evitar renderizações desnecessárias
+const handleClick = useCallback(() => {
+  console.log('Clicado!', id);
+}, [id]); // Nova função apenas quando 'id' muda
+`,
+    },
+    {
+      title: 'React Router: Navegação e Rotas',
+      content: `
+import { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom';
+
+// Configuração básica de rotas
+function App() {
+  return (
+    <BrowserRouter>
+      <nav>
+        <Link to="/">Home</Link>
+        <Link to="/sobre">Sobre</Link>
+        <Link to="/usuarios/123">Usuário 123</Link>
+      </nav>
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/sobre" element={<Sobre />} />
+        <Route path="/usuarios/:id" element={<Usuario />} />
+        <Route path="*" element={<NaoEncontrado />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+// useParams - Acessar parâmetros da URL
+function Usuario() {
+  const { id } = useParams<{ id: string }>();
+  return <h1>Usuário ID: {id}</h1>;
+}
+
+// useNavigate - Navegação programática
+function FormularioLogin() {
+  const navigate = useNavigate();
+  
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Após login bem-sucedido
+    navigate('/dashboard');
+    // Ou substituir histórico (voltar não retorna ao login)
+    navigate('/dashboard', { replace: true });
+  };
+  
+  return <form onSubmit={handleSubmit}>...</form>;
+}
+
+// Rotas aninhadas
+<Route path="/dashboard" element={<Dashboard />}>
+  <Route index element={<DashboardHome />} />
+  <Route path="perfil" element={<Perfil />} />
+  <Route path="config" element={<Configuracoes />} />
+</Route>
+`,
+    },
+    {
+      title: 'React: Gerenciamento de Estado',
+      content: `
+// 1. useState - Estado local simples
+const [nome, setNome] = useState('');
+
+// 2. useReducer - Estado local complexo
+const [state, dispatch] = useReducer(reducer, initialState);
+
+// 3. Context API - Estado global sem bibliotecas externas
+const UsuarioContext = createContext<Usuario | null>(null);
+
+function UsuarioProvider({ children }: { children: React.ReactNode }) {
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
+  
+  return (
+    <UsuarioContext.Provider value={{ usuario, setUsuario }}>
+      {children}
+    </UsuarioContext.Provider>
+  );
+}
+
+// Custom Hook para acessar o contexto
+function useUsuario() {
+  const context = useContext(UsuarioContext);
+  if (!context) throw new Error('useUsuario deve estar dentro de UsuarioProvider');
+  return context;
+}
+
+// 4. Padrão de Estado com Custom Hooks
+function useContador(inicial = 0) {
+  const [valor, setValor] = useState(inicial);
+  
+  const incrementar = useCallback(() => setValor(v => v + 1), []);
+  const decrementar = useCallback(() => setValor(v => v - 1), []);
+  const resetar = useCallback(() => setValor(inicial), [inicial]);
+  
+  return { valor, incrementar, decrementar, resetar };
+}
+
+// Uso do custom hook
+function MeuComponente() {
+  const { valor, incrementar, decrementar } = useContador(10);
+  return (
+    <div>
+      <span>{valor}</span>
+      <button onClick={incrementar}>+</button>
+      <button onClick={decrementar}>-</button>
+    </div>
+  );
+}
+`,
+    },
+    {
+      title: 'React: Formulários e Validação',
+      content: `
+import React, { useState, FormEvent, ChangeEvent } from 'react';
+
+// Formulário Controlado
+function FormularioContato() {
+  const [formData, setFormData] = useState({
+    nome: '',
+    email: '',
+    mensagem: ''
+  });
+  const [erros, setErros] = useState<Record<string, string>>({});
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+    // Limpar erro do campo quando usuário digita
+    if (erros[name]) {
+      setErros(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  const validar = (): boolean => {
+    const novosErros: Record<string, string> = {};
+    
+    if (!formData.nome.trim()) {
+      novosErros.nome = 'Nome é obrigatório';
+    }
+    if (!formData.email.includes('@')) {
+      novosErros.email = 'Email inválido';
+    }
+    if (formData.mensagem.length < 10) {
+      novosErros.mensagem = 'Mensagem deve ter pelo menos 10 caracteres';
+    }
+    
+    setErros(novosErros);
+    return Object.keys(novosErros).length === 0;
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (validar()) {
+      console.log('Dados do formulário:', formData);
+      // Enviar para API
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <input name="nome" value={formData.nome} onChange={handleChange} />
+      {erros.nome && <span className="erro">{erros.nome}</span>}
+      
+      <input name="email" type="email" value={formData.email} onChange={handleChange} />
+      {erros.email && <span className="erro">{erros.email}</span>}
+      
+      <textarea name="mensagem" value={formData.mensagem} onChange={handleChange} />
+      {erros.mensagem && <span className="erro">{erros.mensagem}</span>}
+      
+      <button type="submit">Enviar</button>
+    </form>
+  );
+}
+`,
+    },
+    {
+      title: 'React: Padrões de Componentes',
+      content: `
+import React, { ReactNode, forwardRef, ComponentPropsWithoutRef } from 'react';
+
+// 1. Compound Components - Componentes compostos
+function Card({ children }: { children: ReactNode }) {
+  return <div className="card">{children}</div>;
+}
+
+Card.Header = ({ children }: { children: ReactNode }) => (
+  <div className="card-header">{children}</div>
+);
+
+Card.Body = ({ children }: { children: ReactNode }) => (
+  <div className="card-body">{children}</div>
+);
+
+// Uso: <Card><Card.Header>Título</Card.Header><Card.Body>Conteúdo</Card.Body></Card>
+
+// 2. Render Props - Passar função como children
+interface MouseTrackerProps {
+  children: (position: { x: number; y: number }) => ReactNode;
+}
+
+function MouseTracker({ children }: MouseTrackerProps) {
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  
+  return (
+    <div onMouseMove={(e) => setPosition({ x: e.clientX, y: e.clientY })}>
+      {children(position)}
+    </div>
+  );
+}
+
+// Uso: <MouseTracker>{({ x, y }) => <p>Mouse: {x}, {y}</p>}</MouseTracker>
+
+// 3. forwardRef - Encaminhar refs para elementos DOM
+interface BotaoProps extends ComponentPropsWithoutRef<'button'> {
+  variante?: 'primario' | 'secundario';
+}
+
+const Botao = forwardRef<HTMLButtonElement, BotaoProps>(
+  ({ variante = 'primario', children, ...props }, ref) => {
+    return (
+      <button ref={ref} className={\`btn btn-\${variante}\`} {...props}>
+        {children}
+      </button>
+    );
+  }
+);
+
+// 4. Higher-Order Component (HOC)
+function comCarregamento<P extends object>(Componente: React.ComponentType<P>) {
+  return function ComCarregamento({ carregando, ...props }: P & { carregando: boolean }) {
+    if (carregando) return <div>Carregando...</div>;
+    return <Componente {...(props as P)} />;
+  };
+}
+`,
+    },
+    {
+      title: 'React: Performance e Otimização',
+      content: `
+import React, { memo, useMemo, useCallback, lazy, Suspense } from 'react';
+
+// 1. React.memo - Evitar re-renderizações desnecessárias
+interface ItemProps {
+  id: number;
+  nome: string;
+  onClick: (id: number) => void;
+}
+
+const Item = memo(function Item({ id, nome, onClick }: ItemProps) {
+  console.log('Item renderizado:', id);
+  return <li onClick={() => onClick(id)}>{nome}</li>;
+});
+
+// 2. useMemo - Memorizar valores computados
+function ListaFiltrada({ itens, filtro }: { itens: Item[]; filtro: string }) {
+  const itensFiltrados = useMemo(() => {
+    return itens.filter(item => 
+      item.nome.toLowerCase().includes(filtro.toLowerCase())
+    );
+  }, [itens, filtro]); // Recalcula apenas quando itens ou filtro mudam
+  
+  return <ul>{itensFiltrados.map(item => <li key={item.id}>{item.nome}</li>)}</ul>;
+}
+
+// 3. useCallback - Memorizar callbacks
+function Lista({ itens }: { itens: Item[] }) {
+  const handleClick = useCallback((id: number) => {
+    console.log('Clicado:', id);
+  }, []); // Função estável entre renderizações
+  
+  return (
+    <ul>
+      {itens.map(item => (
+        <Item key={item.id} {...item} onClick={handleClick} />
+      ))}
+    </ul>
+  );
+}
+
+// 4. Lazy Loading - Carregar componentes sob demanda
+const PaginaPesada = lazy(() => import('./PaginaPesada'));
+
+function App() {
+  return (
+    <Suspense fallback={<div>Carregando página...</div>}>
+      <PaginaPesada />
+    </Suspense>
+  );
+}
+
+// 5. Virtualização para listas longas (conceito)
+// Use bibliotecas como react-window ou react-virtualized
+// para renderizar apenas itens visíveis em listas com milhares de itens
+`,
+    },
+    {
       title: 'TailwindCSS: Classes Utilitárias e Responsividade',
       content: `
 <!-- 
