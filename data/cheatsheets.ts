@@ -986,6 +986,1485 @@ cursor, border-radius, box-shadow, text-shadow, filter, appearance, user-select,
 /* Listas e Contadores */
 list-style, list-style-type, counter-increment, counter-reset, content
 `
+    },
+    {
+      title: 'HTML: Formulários e Inputs',
+      content: `
+<!-- Formulário completo com diversos tipos de input -->
+<form action="/submit" method="POST" enctype="multipart/form-data">
+  <!-- Campos de texto -->
+  <label for="nome">Nome:</label>
+  <input type="text" id="nome" name="nome" placeholder="Digite seu nome" required>
+  
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" autocomplete="email">
+  
+  <label for="senha">Senha:</label>
+  <input type="password" id="senha" name="senha" minlength="8">
+  
+  <!-- Números e Datas -->
+  <input type="number" name="idade" min="18" max="120" step="1">
+  <input type="date" name="data_nascimento">
+  <input type="time" name="horario">
+  <input type="datetime-local" name="agendamento">
+  
+  <!-- Seleção -->
+  <input type="checkbox" id="termos" name="termos" checked>
+  <label for="termos">Aceito os termos</label>
+  
+  <input type="radio" id="masc" name="genero" value="M">
+  <label for="masc">Masculino</label>
+  <input type="radio" id="fem" name="genero" value="F">
+  <label for="fem">Feminino</label>
+  
+  <!-- Select / Dropdown -->
+  <select name="pais" required>
+    <option value="">Selecione...</option>
+    <option value="BR">Brasil</option>
+    <option value="US">Estados Unidos</option>
+  </select>
+  
+  <!-- Textarea -->
+  <textarea name="mensagem" rows="4" cols="50" maxlength="500"></textarea>
+  
+  <!-- Arquivo e Outros -->
+  <input type="file" name="documento" accept=".pdf,.doc">
+  <input type="color" name="cor_favorita" value="#ff0000">
+  <input type="range" name="volume" min="0" max="100" value="50">
+  
+  <button type="submit">Enviar</button>
+  <button type="reset">Limpar</button>
+</form>
+`
+    },
+    {
+      title: 'HTML: Acessibilidade (a11y)',
+      content: `
+<!-- Atributos ARIA para acessibilidade -->
+
+<!-- Roles - Define o papel do elemento -->
+<nav role="navigation" aria-label="Menu Principal">
+  <ul>
+    <li><a href="/" aria-current="page">Home</a></li>
+    <li><a href="/sobre">Sobre</a></li>
+  </ul>
+</nav>
+
+<!-- aria-label - Texto alternativo para leitores de tela -->
+<button aria-label="Fechar modal">
+  <span aria-hidden="true">&times;</span>
+</button>
+
+<!-- aria-labelledby e aria-describedby -->
+<div role="dialog" aria-labelledby="titulo-modal" aria-describedby="desc-modal">
+  <h2 id="titulo-modal">Confirmar Ação</h2>
+  <p id="desc-modal">Você tem certeza que deseja continuar?</p>
+</div>
+
+<!-- Estados e Propriedades -->
+<button aria-expanded="false" aria-controls="menu">Menu</button>
+<div id="menu" aria-hidden="true">...</div>
+
+<input type="text" aria-required="true" aria-invalid="false">
+
+<!-- Live Regions - Anuncia mudanças dinâmicas -->
+<div role="alert" aria-live="assertive">Erro: Preencha todos os campos.</div>
+<div aria-live="polite">Carregando...</div>
+
+<!-- Skip Links para navegação por teclado -->
+<a href="#conteudo-principal" class="skip-link">Pular para o conteúdo</a>
+
+<!-- Imagens -->
+<img src="grafico.png" alt="Gráfico de vendas mostrando crescimento de 20%">
+<img src="decorativo.png" alt="" role="presentation"> <!-- Decorativo -->
+`
+    },
+    {
+      title: 'HTML: Meta Tags e SEO',
+      content: `
+<head>
+  <!-- Charset e Viewport -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- SEO Básico -->
+  <title>Título da Página | Nome do Site</title>
+  <meta name="description" content="Descrição concisa da página (até 160 caracteres)">
+  <meta name="keywords" content="palavra-chave1, palavra-chave2">
+  <meta name="author" content="Nome do Autor">
+  <meta name="robots" content="index, follow">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://example.com/pagina">
+  
+  <!-- Open Graph (Facebook, LinkedIn) -->
+  <meta property="og:title" content="Título para Compartilhamento">
+  <meta property="og:description" content="Descrição para redes sociais">
+  <meta property="og:image" content="https://example.com/imagem.jpg">
+  <meta property="og:url" content="https://example.com/pagina">
+  <meta property="og:type" content="website">
+  
+  <!-- Twitter Cards -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Título para Twitter">
+  <meta name="twitter:description" content="Descrição para Twitter">
+  <meta name="twitter:image" content="https://example.com/imagem.jpg">
+  
+  <!-- Favicon e Ícones -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  <!-- Preload e Prefetch -->
+  <link rel="preload" href="/fonts/minha-fonte.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="prefetch" href="/proxima-pagina.html">
+</head>
+`
+    },
+    {
+      title: 'CSS: Flexbox Completo',
+      content: `
+/* Container Flex */
+.container {
+  display: flex;             /* Ativa flexbox */
+  flex-direction: row;       /* row | row-reverse | column | column-reverse */
+  flex-wrap: wrap;           /* nowrap | wrap | wrap-reverse */
+  justify-content: center;   /* flex-start | flex-end | center | space-between | space-around | space-evenly */
+  align-items: center;       /* flex-start | flex-end | center | stretch | baseline */
+  align-content: center;     /* Alinha múltiplas linhas */
+  gap: 1rem;                 /* Espaço entre itens */
+}
+
+/* Itens Flex */
+.item {
+  flex-grow: 1;              /* Proporção de crescimento */
+  flex-shrink: 0;            /* Proporção de encolhimento */
+  flex-basis: 200px;         /* Tamanho base antes de crescer/encolher */
+  flex: 1 0 200px;           /* Shorthand: grow shrink basis */
+  align-self: flex-end;      /* Alinhamento individual */
+  order: 2;                  /* Ordem de exibição */
+}
+
+/* Padrões Comuns */
+/* Centralizar elemento */
+.centralizado {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Layout de Cards */
+.cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.card {
+  flex: 1 1 300px; /* Cresce, encolhe, base 300px */
+}
+
+/* Footer sempre no final */
+.pagina {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+.conteudo { flex: 1; }
+`
+    },
+    {
+      title: 'CSS: Grid Layout Completo',
+      content: `
+/* Container Grid */
+.container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);     /* 3 colunas iguais */
+  grid-template-columns: 200px 1fr 2fr;      /* Colunas mistas */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsivo */
+  grid-template-rows: auto 1fr auto;         /* Linhas */
+  gap: 1rem;                                  /* Espaço entre células */
+  row-gap: 1rem;                              /* Espaço entre linhas */
+  column-gap: 2rem;                           /* Espaço entre colunas */
+}
+
+/* Posicionamento de Itens */
+.item {
+  grid-column: 1 / 3;        /* Da coluna 1 até 3 */
+  grid-column: span 2;       /* Ocupa 2 colunas */
+  grid-row: 1 / 4;           /* Da linha 1 até 4 */
+  grid-area: 1 / 1 / 3 / 4;  /* row-start / col-start / row-end / col-end */
+}
+
+/* Grid Template Areas */
+.layout {
+  display: grid;
+  grid-template-areas:
+    "header header header"
+    "nav    main   aside"
+    "footer footer footer";
+  grid-template-columns: 200px 1fr 200px;
+  grid-template-rows: auto 1fr auto;
+}
+
+.header { grid-area: header; }
+.nav    { grid-area: nav; }
+.main   { grid-area: main; }
+.aside  { grid-area: aside; }
+.footer { grid-area: footer; }
+
+/* Alinhamento */
+.container {
+  justify-items: center;     /* Alinha itens horizontalmente */
+  align-items: center;       /* Alinha itens verticalmente */
+  justify-content: center;   /* Alinha grid horizontalmente */
+  align-content: center;     /* Alinha grid verticalmente */
+}
+`
+    },
+    {
+      title: 'CSS: Variáveis e Custom Properties',
+      content: `
+/* Definindo variáveis CSS (Custom Properties) */
+:root {
+  /* Cores */
+  --cor-primaria: #3b82f6;
+  --cor-secundaria: #10b981;
+  --cor-texto: #1f2937;
+  --cor-fundo: #ffffff;
+  
+  /* Tipografia */
+  --fonte-principal: 'Inter', sans-serif;
+  --tamanho-base: 16px;
+  --linha-altura: 1.5;
+  
+  /* Espaçamento */
+  --espacamento-xs: 0.25rem;
+  --espacamento-sm: 0.5rem;
+  --espacamento-md: 1rem;
+  --espacamento-lg: 2rem;
+  
+  /* Bordas e Sombras */
+  --borda-radius: 0.5rem;
+  --sombra: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  
+  /* Transições */
+  --transicao-rapida: 150ms ease-in-out;
+  --transicao-media: 300ms ease-in-out;
+}
+
+/* Tema Escuro */
+[data-theme="dark"] {
+  --cor-texto: #f3f4f6;
+  --cor-fundo: #111827;
+}
+
+/* Usando variáveis */
+.botao {
+  background-color: var(--cor-primaria);
+  color: var(--cor-fundo);
+  padding: var(--espacamento-sm) var(--espacamento-md);
+  border-radius: var(--borda-radius);
+  transition: background-color var(--transicao-rapida);
+}
+
+/* Fallback */
+.elemento {
+  color: var(--cor-indefinida, #333); /* Usa #333 se não existir */
+}
+
+/* Variáveis em Media Queries */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --cor-texto: #f3f4f6;
+    --cor-fundo: #111827;
+  }
+}
+`
+    },
+    {
+      title: 'CSS: Pseudo-elementos e Pseudo-classes',
+      content: `
+/* Pseudo-classes de Estado */
+a:hover { color: blue; }           /* Mouse sobre */
+a:active { color: red; }           /* Clicando */
+a:visited { color: purple; }       /* Link visitado */
+input:focus { outline: 2px solid blue; } /* Com foco */
+input:disabled { opacity: 0.5; }   /* Desabilitado */
+input:checked + label { font-weight: bold; } /* Checkbox marcado */
+
+/* Pseudo-classes Estruturais */
+li:first-child { font-weight: bold; }  /* Primeiro filho */
+li:last-child { border: none; }        /* Último filho */
+li:nth-child(odd) { background: #f0f0f0; }  /* Ímpares */
+li:nth-child(even) { background: #fff; }    /* Pares */
+li:nth-child(3n) { color: red; }       /* Cada terceiro */
+p:first-of-type { font-size: 1.2em; }  /* Primeiro do tipo */
+
+/* Pseudo-classes de Formulário */
+input:valid { border-color: green; }
+input:invalid { border-color: red; }
+input:required { border-left: 3px solid red; }
+input:placeholder-shown { font-style: italic; }
+
+/* Pseudo-elementos */
+p::before {
+  content: "→ ";
+  color: blue;
+}
+
+p::after {
+  content: " ←";
+  color: blue;
+}
+
+p::first-letter {
+  font-size: 2em;
+  float: left;
+}
+
+p::first-line {
+  font-weight: bold;
+}
+
+input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+::selection {
+  background: #3b82f6;
+  color: white;
+}
+`
+    },
+    {
+      title: 'JavaScript: Métodos de Array',
+      content: `
+const numeros = [1, 2, 3, 4, 5];
+const usuarios = [
+  { nome: 'Ana', idade: 25 },
+  { nome: 'Bruno', idade: 30 },
+  { nome: 'Carlos', idade: 20 }
+];
+
+// map() - Transforma cada elemento
+const dobrados = numeros.map(n => n * 2); // [2, 4, 6, 8, 10]
+const nomes = usuarios.map(u => u.nome);  // ['Ana', 'Bruno', 'Carlos']
+
+// filter() - Filtra elementos
+const pares = numeros.filter(n => n % 2 === 0); // [2, 4]
+const adultos = usuarios.filter(u => u.idade >= 25);
+
+// find() - Encontra primeiro elemento
+const encontrado = usuarios.find(u => u.nome === 'Bruno');
+
+// findIndex() - Índice do primeiro elemento
+const indice = usuarios.findIndex(u => u.nome === 'Bruno'); // 1
+
+// reduce() - Reduz a um único valor
+const soma = numeros.reduce((acc, n) => acc + n, 0); // 15
+const maiorIdade = usuarios.reduce((max, u) => 
+  u.idade > max ? u.idade : max, 0); // 30
+
+// some() / every() - Testa condições
+const temPar = numeros.some(n => n % 2 === 0);     // true
+const todosPares = numeros.every(n => n % 2 === 0); // false
+
+// includes() - Verifica presença
+const temTres = numeros.includes(3); // true
+
+// sort() - Ordena (modifica original)
+const ordenados = [...numeros].sort((a, b) => b - a); // [5,4,3,2,1]
+const porNome = [...usuarios].sort((a, b) => a.nome.localeCompare(b.nome));
+
+// flat() / flatMap() - Achata arrays aninhados
+const aninhado = [[1, 2], [3, 4]];
+const plano = aninhado.flat(); // [1, 2, 3, 4]
+
+// slice() - Copia parte do array (não modifica original)
+const parte = numeros.slice(1, 3); // [2, 3]
+
+// splice() - Remove/adiciona elementos (modifica original)
+// array.splice(inicio, quantidadeRemover, ...novosElementos)
+`
+    },
+    {
+      title: 'JavaScript: Métodos de Objeto e String',
+      content: `
+// Métodos de Object
+const pessoa = { nome: 'Ana', idade: 25, cidade: 'SP' };
+
+Object.keys(pessoa);    // ['nome', 'idade', 'cidade']
+Object.values(pessoa);  // ['Ana', 25, 'SP']
+Object.entries(pessoa); // [['nome', 'Ana'], ['idade', 25], ['cidade', 'SP']]
+
+Object.assign({}, pessoa, { email: 'ana@mail.com' }); // Merge
+{ ...pessoa, email: 'ana@mail.com' }; // Spread (mais moderno)
+
+Object.freeze(pessoa);  // Impede modificações
+Object.seal(pessoa);    // Impede adicionar/remover, permite editar
+
+'nome' in pessoa;       // true
+pessoa.hasOwnProperty('nome'); // true
+
+// Métodos de String
+const texto = "  Hello, World!  ";
+
+texto.trim();           // "Hello, World!"
+texto.toLowerCase();    // "  hello, world!  "
+texto.toUpperCase();    // "  HELLO, WORLD!  "
+
+texto.includes('World'); // true
+texto.startsWith('  He'); // true
+texto.endsWith('!  ');   // true
+
+texto.indexOf('o');      // 4 (primeira ocorrência)
+texto.lastIndexOf('o');  // 9 (última ocorrência)
+
+texto.slice(2, 7);       // "Hello"
+texto.substring(2, 7);   // "Hello"
+
+texto.replace('World', 'JS');  // "  Hello, JS!  " (primeira)
+texto.replaceAll('l', 'L');    // "  HeLLo, WorLd!  "
+
+texto.split(', ');       // ['  Hello', 'World!  ']
+'a-b-c'.split('-');      // ['a', 'b', 'c']
+
+'abc'.repeat(3);         // 'abcabcabc'
+'5'.padStart(3, '0');    // '005'
+'5'.padEnd(3, '0');      // '500'
+
+// Template Literals
+const nome = 'Ana';
+\`Olá, \${nome}!\`;       // "Olá, Ana!"
+\`Linha 1
+Linha 2\`;               // Multiline
+`
+    },
+    {
+      title: 'JavaScript: Desestruturação e Spread',
+      content: `
+// Desestruturação de Objeto
+const usuario = { nome: 'Ana', idade: 25, email: 'ana@mail.com' };
+
+const { nome, idade } = usuario;
+const { nome: nomeUsuario } = usuario;  // Renomear
+const { cidade = 'Não informada' } = usuario; // Valor padrão
+const { nome, ...resto } = usuario; // Rest: { idade: 25, email: '...' }
+
+// Desestruturação de Array
+const cores = ['vermelho', 'verde', 'azul'];
+
+const [primeira, segunda] = cores;
+const [, , terceira] = cores;  // Pular elementos
+const [primeiraCor, ...outrasCores] = cores; // Rest
+
+// Desestruturação em Parâmetros de Função
+function saudacao({ nome, idade = 18 }) {
+  return \`\${nome} tem \${idade} anos\`;
+}
+saudacao({ nome: 'Ana', idade: 25 });
+
+// Spread Operator (...)
+// Em Arrays
+const arr1 = [1, 2, 3];
+const arr2 = [4, 5, 6];
+const combinado = [...arr1, ...arr2];  // [1, 2, 3, 4, 5, 6]
+const copia = [...arr1];               // Cópia superficial
+
+// Em Objetos
+const obj1 = { a: 1, b: 2 };
+const obj2 = { c: 3, d: 4 };
+const merged = { ...obj1, ...obj2 };   // { a: 1, b: 2, c: 3, d: 4 }
+const atualizado = { ...obj1, b: 10 }; // { a: 1, b: 10 }
+
+// Em Chamadas de Função
+const numeros = [1, 5, 3, 9, 2];
+Math.max(...numeros);  // 9
+
+// Clonagem Profunda (para objetos aninhados)
+const clone = JSON.parse(JSON.stringify(objetoAninhado));
+const cloneModerno = structuredClone(objetoAninhado); // API moderna
+`
+    },
+    {
+      title: 'JavaScript: Módulos ES6',
+      content: `
+// ===== arquivo: utils.js =====
+
+// Named Exports
+export const PI = 3.14159;
+export function somar(a, b) {
+  return a + b;
+}
+export const multiplicar = (a, b) => a * b;
+
+// Export de classe
+export class Calculadora {
+  static dobrar(n) {
+    return n * 2;
+  }
+}
+
+// Default Export (apenas um por arquivo)
+const funcaoPrincipal = () => {
+  console.log('Função principal');
+};
+export default funcaoPrincipal;
+
+
+// ===== arquivo: main.js =====
+
+// Named Imports
+import { PI, somar, multiplicar } from './utils.js';
+import { somar as soma } from './utils.js';  // Renomear
+
+// Default Import (pode usar qualquer nome)
+import minhaFuncao from './utils.js';
+
+// Import tudo como namespace
+import * as Utils from './utils.js';
+Utils.somar(1, 2);
+Utils.PI;
+
+// Import dinâmico (async)
+const carregarModulo = async () => {
+  const modulo = await import('./utils.js');
+  modulo.somar(1, 2);
+};
+
+// Re-exportar
+export { somar, multiplicar } from './utils.js';
+export * from './utils.js';
+export { default } from './utils.js';
+`
+    },
+    {
+      title: 'TypeScript: Tipos Utilitários',
+      content: `
+interface Usuario {
+  id: number;
+  nome: string;
+  email: string;
+  senha: string;
+  ativo: boolean;
+}
+
+// Partial<T> - Torna todas as propriedades opcionais
+type UsuarioParcial = Partial<Usuario>;
+// { id?: number; nome?: string; ... }
+
+// Required<T> - Torna todas as propriedades obrigatórias
+type UsuarioCompleto = Required<UsuarioParcial>;
+
+// Readonly<T> - Torna todas as propriedades somente leitura
+type UsuarioImutavel = Readonly<Usuario>;
+
+// Pick<T, K> - Seleciona apenas algumas propriedades
+type UsuarioPublico = Pick<Usuario, 'id' | 'nome'>;
+// { id: number; nome: string }
+
+// Omit<T, K> - Exclui propriedades
+type UsuarioSemSenha = Omit<Usuario, 'senha'>;
+
+// Record<K, T> - Cria tipo com chaves K e valores T
+type UsuariosPorId = Record<number, Usuario>;
+// { [id: number]: Usuario }
+
+// Exclude<T, U> - Exclui tipos de uma união
+type Status = 'ativo' | 'inativo' | 'pendente';
+type StatusAtivo = Exclude<Status, 'inativo'>; // 'ativo' | 'pendente'
+
+// Extract<T, U> - Extrai tipos que são atribuíveis a U
+type Eventos = 'click' | 'scroll' | 'mousemove';
+type EventosMouse = Extract<Eventos, 'click' | 'mousemove'>; // 'click' | 'mousemove'
+
+// NonNullable<T> - Remove null e undefined
+type Valor = string | null | undefined;
+type ValorDefinido = NonNullable<Valor>; // string
+
+// ReturnType<T> - Tipo de retorno de uma função
+function getUsuario() { return { nome: 'Ana', id: 1 }; }
+type TipoRetorno = ReturnType<typeof getUsuario>;
+// { nome: string; id: number }
+
+// Parameters<T> - Tipos dos parâmetros de uma função
+type Params = Parameters<typeof getUsuario>; // []
+`
+    },
+    {
+      title: 'TypeScript: Type Guards e Narrowing',
+      content: `
+// Type Guards - Funções que refinam tipos
+
+// typeof guard
+function processarValor(valor: string | number) {
+  if (typeof valor === 'string') {
+    return valor.toUpperCase(); // valor é string aqui
+  }
+  return valor.toFixed(2); // valor é number aqui
+}
+
+// instanceof guard
+class Cachorro { latir() { return 'Au!'; } }
+class Gato { miar() { return 'Miau!'; } }
+
+function fazerSom(animal: Cachorro | Gato) {
+  if (animal instanceof Cachorro) {
+    return animal.latir();
+  }
+  return animal.miar();
+}
+
+// in operator guard
+interface Ave { voar(): void; }
+interface Peixe { nadar(): void; }
+
+function mover(animal: Ave | Peixe) {
+  if ('voar' in animal) {
+    animal.voar();
+  } else {
+    animal.nadar();
+  }
+}
+
+// Custom Type Guard (is)
+interface Carro { tipo: 'carro'; rodas: 4; }
+interface Moto { tipo: 'moto'; rodas: 2; }
+
+function isCarro(veiculo: Carro | Moto): veiculo is Carro {
+  return veiculo.tipo === 'carro';
+}
+
+function descreverVeiculo(veiculo: Carro | Moto) {
+  if (isCarro(veiculo)) {
+    console.log(\`Carro com \${veiculo.rodas} rodas\`);
+  }
+}
+
+// Discriminated Unions
+type Forma =
+  | { tipo: 'circulo'; raio: number }
+  | { tipo: 'retangulo'; largura: number; altura: number };
+
+function calcularArea(forma: Forma): number {
+  switch (forma.tipo) {
+    case 'circulo':
+      return Math.PI * forma.raio ** 2;
+    case 'retangulo':
+      return forma.largura * forma.altura;
+  }
+}
+`
+    },
+    {
+      title: 'TypeScript: Generics Avançados',
+      content: `
+// Função genérica básica
+function identity<T>(arg: T): T {
+  return arg;
+}
+
+// Constraints (restrições)
+interface ComId { id: number; }
+
+function buscarPorId<T extends ComId>(items: T[], id: number): T | undefined {
+  return items.find(item => item.id === id);
+}
+
+// Múltiplos parâmetros de tipo
+function mapear<T, U>(array: T[], fn: (item: T) => U): U[] {
+  return array.map(fn);
+}
+
+// keyof - Chaves de um tipo
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key];
+}
+
+// Tipo condicional
+type IsString<T> = T extends string ? true : false;
+type Resultado = IsString<'hello'>; // true
+
+// infer - Inferir tipo dentro de condicional
+type ElementoDeArray<T> = T extends (infer U)[] ? U : never;
+type Elem = ElementoDeArray<string[]>; // string
+
+// Generic com valor padrão
+interface Resposta<T = string> {
+  dados: T;
+  sucesso: boolean;
+}
+
+// Mapped Types com generics
+type Opcional<T> = {
+  [P in keyof T]?: T[P];
+};
+
+type SomenteLeitura<T> = {
+  readonly [P in keyof T]: T[P];
+};
+
+// Template Literal Types
+type Evento = 'click' | 'focus';
+type Handler = \`on\${Capitalize<Evento>}\`; // 'onClick' | 'onFocus'
+
+// Utility type personalizado
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+`
+    },
+    {
+      title: 'Next.js: App Router (v13+)',
+      content: `
+// Estrutura de pastas do App Router
+// app/
+//   layout.tsx      - Layout raiz
+//   page.tsx        - Rota /
+//   loading.tsx     - UI de carregamento
+//   error.tsx       - UI de erro
+//   not-found.tsx   - Página 404
+//   blog/
+//     page.tsx      - Rota /blog
+//     [slug]/
+//       page.tsx    - Rota /blog/:slug
+
+// app/layout.tsx - Layout raiz
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="pt-BR">
+      <body>
+        <nav>Menu</nav>
+        {children}
+        <footer>Rodapé</footer>
+      </body>
+    </html>
+  );
+}
+
+// app/page.tsx - Página inicial
+export default function Home() {
+  return <h1>Bem-vindo</h1>;
+}
+
+// app/blog/[slug]/page.tsx - Rota dinâmica
+interface PageProps {
+  params: { slug: string };
+  searchParams: { [key: string]: string | undefined };
+}
+
+export default function Post({ params, searchParams }: PageProps) {
+  return <h1>Post: {params.slug}</h1>;
+}
+
+// Gerar páginas estáticas para rotas dinâmicas
+export async function generateStaticParams() {
+  const posts = await fetch('/api/posts').then(r => r.json());
+  return posts.map((post: { slug: string }) => ({
+    slug: post.slug,
+  }));
+}
+
+// Metadata para SEO
+export const metadata = {
+  title: 'Meu Blog',
+  description: 'Descrição do blog',
+};
+`
+    },
+    {
+      title: 'Next.js: Server e Client Components',
+      content: `
+// Por padrão, componentes no App Router são Server Components
+
+// app/usuarios/page.tsx - Server Component
+async function getUsuarios() {
+  const res = await fetch('https://api.example.com/usuarios', {
+    next: { revalidate: 3600 } // Revalidar a cada hora
+  });
+  return res.json();
+}
+
+export default async function UsuariosPage() {
+  const usuarios = await getUsuarios();
+  
+  return (
+    <ul>
+      {usuarios.map((u: { id: number; nome: string }) => (
+        <li key={u.id}>{u.nome}</li>
+      ))}
+    </ul>
+  );
+}
+
+// components/Botao.tsx - Client Component
+'use client'; // Diretiva obrigatória para Client Components
+
+import { useState } from 'react';
+
+export default function Botao() {
+  const [count, setCount] = useState(0);
+  
+  return (
+    <button onClick={() => setCount(c => c + 1)}>
+      Clicado {count} vezes
+    </button>
+  );
+}
+
+// Padrão: Passar Server Data para Client Component
+// app/dashboard/page.tsx
+import Grafico from '@/components/Grafico';
+
+export default async function Dashboard() {
+  const dados = await fetch('/api/stats').then(r => r.json());
+  
+  // Passa dados do servidor para componente cliente
+  return <Grafico dados={dados} />;
+}
+
+// components/Grafico.tsx
+'use client';
+export default function Grafico({ dados }: { dados: number[] }) {
+  // Usar dados para renderizar gráfico interativo
+  return <div>...</div>;
+}
+`
+    },
+    {
+      title: 'Next.js: API Routes e Server Actions',
+      content: `
+// app/api/usuarios/route.ts - API Route (App Router)
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+  
+  const usuarios = [{ id: 1, nome: 'Ana' }];
+  return NextResponse.json(usuarios);
+}
+
+export async function POST(request: NextRequest) {
+  const body = await request.json();
+  
+  // Criar usuário no banco...
+  
+  return NextResponse.json(
+    { mensagem: 'Usuário criado' },
+    { status: 201 }
+  );
+}
+
+// app/api/usuarios/[id]/route.ts - Rota dinâmica
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const usuario = { id: params.id, nome: 'Ana' };
+  return NextResponse.json(usuario);
+}
+
+// Server Actions (v14+)
+// app/actions.ts
+'use server';
+
+export async function criarPost(formData: FormData) {
+  const titulo = formData.get('titulo') as string;
+  
+  // Salvar no banco de dados...
+  
+  return { sucesso: true };
+}
+
+// app/novo-post/page.tsx
+import { criarPost } from './actions';
+
+export default function NovoPost() {
+  return (
+    <form action={criarPost}>
+      <input name="titulo" required />
+      <button type="submit">Criar</button>
+    </form>
+  );
+}
+`
+    },
+    {
+      title: 'Next.js: Data Fetching e Caching',
+      content: `
+// Fetch com cache padrão (Server Component)
+async function getDados() {
+  // Cache padrão: força cache estático
+  const res = await fetch('https://api.example.com/dados');
+  return res.json();
+}
+
+// Sem cache (sempre busca dados frescos)
+async function getDadosAtualizados() {
+  const res = await fetch('https://api.example.com/dados', {
+    cache: 'no-store'
+  });
+  return res.json();
+}
+
+// Revalidação baseada em tempo (ISR)
+async function getDadosComRevalidacao() {
+  const res = await fetch('https://api.example.com/dados', {
+    next: { revalidate: 60 } // Revalida a cada 60 segundos
+  });
+  return res.json();
+}
+
+// Revalidação por tags
+async function getPosts() {
+  const res = await fetch('https://api.example.com/posts', {
+    next: { tags: ['posts'] }
+  });
+  return res.json();
+}
+
+// Revalidar tag via Server Action
+'use server';
+import { revalidateTag, revalidatePath } from 'next/cache';
+
+export async function atualizarPosts() {
+  // Revalida todos os fetches com tag 'posts'
+  revalidateTag('posts');
+  
+  // Ou revalida uma rota específica
+  revalidatePath('/blog');
+}
+
+// Parallel Data Fetching
+async function Page() {
+  // Busca em paralelo
+  const [usuarios, posts] = await Promise.all([
+    getUsuarios(),
+    getPosts()
+  ]);
+  
+  return <div>...</div>;
+}
+`
+    },
+    {
+      title: 'TailwindCSS: Sistema de Espaçamento',
+      content: `
+<!-- Escala de Espaçamento (1 unidade = 0.25rem = 4px) -->
+<!-- p-1 = 4px, p-2 = 8px, p-4 = 16px, p-8 = 32px, p-16 = 64px -->
+
+<!-- Padding -->
+<div class="p-4">Padding em todos os lados</div>
+<div class="px-4 py-2">Padding horizontal e vertical</div>
+<div class="pt-4 pr-2 pb-4 pl-2">Padding individual</div>
+
+<!-- Margin -->
+<div class="m-4">Margin em todos os lados</div>
+<div class="mx-auto">Margin horizontal auto (centralizar)</div>
+<div class="mt-8 mb-4">Margin top e bottom</div>
+<div class="-mt-4">Margin negativo (sobe o elemento)</div>
+
+<!-- Space Between (para flex/grid containers) -->
+<div class="flex space-x-4">
+  <div>Item 1</div>
+  <div>Item 2</div>
+  <div>Item 3</div>
+</div>
+
+<div class="flex flex-col space-y-2">
+  <div>Item 1</div>
+  <div>Item 2</div>
+</div>
+
+<!-- Gap (alternativa moderna para space) -->
+<div class="flex gap-4">Espaço igual entre items</div>
+<div class="grid gap-x-4 gap-y-2">Gaps diferentes</div>
+
+<!-- Width e Height -->
+<div class="w-full h-screen">Largura total, altura da tela</div>
+<div class="w-1/2 h-64">50% largura, 256px altura</div>
+<div class="min-w-0 max-w-md">Largura mín e máx</div>
+<div class="w-fit">Largura do conteúdo</div>
+
+<!-- Aspect Ratio -->
+<div class="aspect-video">Proporção 16:9</div>
+<div class="aspect-square">Proporção 1:1</div>
+`
+    },
+    {
+      title: 'TailwindCSS: Tipografia e Cores',
+      content: `
+<!-- Tamanho de Fonte -->
+<p class="text-xs">Extra pequeno (12px)</p>
+<p class="text-sm">Pequeno (14px)</p>
+<p class="text-base">Base (16px)</p>
+<p class="text-lg">Grande (18px)</p>
+<p class="text-xl">Extra grande (20px)</p>
+<p class="text-2xl">2x grande (24px)</p>
+<p class="text-4xl">4x grande (36px)</p>
+
+<!-- Peso da Fonte -->
+<p class="font-thin">Thin (100)</p>
+<p class="font-light">Light (300)</p>
+<p class="font-normal">Normal (400)</p>
+<p class="font-medium">Medium (500)</p>
+<p class="font-semibold">Semibold (600)</p>
+<p class="font-bold">Bold (700)</p>
+
+<!-- Alinhamento e Decoração -->
+<p class="text-left">Esquerda</p>
+<p class="text-center">Centro</p>
+<p class="text-right">Direita</p>
+<p class="underline">Sublinhado</p>
+<p class="line-through">Riscado</p>
+<p class="uppercase">MAIÚSCULAS</p>
+<p class="capitalize">Capitalizado</p>
+
+<!-- Cores de Texto -->
+<p class="text-gray-500">Cinza médio</p>
+<p class="text-blue-600">Azul</p>
+<p class="text-red-500">Vermelho</p>
+<p class="text-green-700">Verde escuro</p>
+
+<!-- Cores de Fundo -->
+<div class="bg-white">Fundo branco</div>
+<div class="bg-gray-100">Cinza claro</div>
+<div class="bg-blue-500">Azul</div>
+<div class="bg-gradient-to-r from-blue-500 to-purple-500">Gradiente</div>
+
+<!-- Opacidade -->
+<div class="bg-blue-500/50">50% opacidade</div>
+<p class="text-black/75">75% opacidade</p>
+`
+    },
+    {
+      title: 'TailwindCSS: Componentes Comuns',
+      content: `
+<!-- Botão Primário -->
+<button class="
+  bg-blue-500 hover:bg-blue-600 
+  text-white font-semibold 
+  py-2 px-4 
+  rounded-lg 
+  transition-colors duration-200
+  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+  disabled:opacity-50 disabled:cursor-not-allowed
+">
+  Botão
+</button>
+
+<!-- Card -->
+<div class="
+  bg-white dark:bg-gray-800
+  rounded-xl shadow-lg
+  p-6
+  border border-gray-200 dark:border-gray-700
+">
+  <h3 class="text-xl font-bold mb-2">Título do Card</h3>
+  <p class="text-gray-600 dark:text-gray-300">Conteúdo do card...</p>
+</div>
+
+<!-- Input -->
+<input class="
+  w-full
+  px-4 py-2
+  border border-gray-300 rounded-lg
+  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent
+  placeholder-gray-400
+" placeholder="Digite algo...">
+
+<!-- Badge/Tag -->
+<span class="
+  inline-flex items-center
+  px-2.5 py-0.5
+  rounded-full
+  text-xs font-medium
+  bg-green-100 text-green-800
+">
+  Ativo
+</span>
+
+<!-- Avatar -->
+<img class="
+  w-10 h-10
+  rounded-full
+  object-cover
+  ring-2 ring-white
+" src="avatar.jpg" alt="Avatar">
+
+<!-- Lista com Hover -->
+<ul class="divide-y divide-gray-200">
+  <li class="py-3 px-4 hover:bg-gray-50 cursor-pointer transition-colors">
+    Item 1
+  </li>
+  <li class="py-3 px-4 hover:bg-gray-50 cursor-pointer transition-colors">
+    Item 2
+  </li>
+</ul>
+`
+    },
+    {
+      title: 'TailwindCSS: Responsividade e Dark Mode',
+      content: `
+<!-- Breakpoints -->
+<!-- sm: 640px, md: 768px, lg: 1024px, xl: 1280px, 2xl: 1536px -->
+
+<!-- Mobile First (padrão é mobile, adiciona para telas maiores) -->
+<div class="
+  text-sm         /* Mobile: texto pequeno */
+  md:text-base    /* Tablet: texto normal */
+  lg:text-lg      /* Desktop: texto grande */
+">
+  Texto responsivo
+</div>
+
+<!-- Grid Responsivo -->
+<div class="
+  grid 
+  grid-cols-1        /* 1 coluna no mobile */
+  sm:grid-cols-2     /* 2 colunas em sm */
+  lg:grid-cols-3     /* 3 colunas em lg */
+  xl:grid-cols-4     /* 4 colunas em xl */
+  gap-4
+">
+  <div>Card 1</div>
+  <div>Card 2</div>
+  <div>Card 3</div>
+  <div>Card 4</div>
+</div>
+
+<!-- Ocultar/Mostrar por Breakpoint -->
+<div class="hidden md:block">Visível apenas em md+</div>
+<div class="block md:hidden">Visível apenas em mobile</div>
+
+<!-- Dark Mode -->
+<!-- Habilitar em tailwind.config.js: darkMode: 'class' ou 'media' -->
+<div class="
+  bg-white dark:bg-gray-900
+  text-gray-900 dark:text-white
+  border border-gray-200 dark:border-gray-700
+">
+  Suporta modo escuro
+</div>
+
+<!-- Hover, Focus e States -->
+<button class="
+  bg-blue-500
+  hover:bg-blue-600
+  active:bg-blue-700
+  focus:ring-2 focus:ring-blue-500
+  disabled:opacity-50
+  group-hover:text-white   /* Quando o pai com 'group' tem hover */
+">
+  Estados
+</button>
+`
+    },
+    {
+      title: 'Angular: Services e Injeção de Dependência',
+      content: `
+// user.service.ts
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable, BehaviorSubject } from 'rxjs';
+
+// Serviço injetável em toda a aplicação
+@Injectable({
+  providedIn: 'root' // Singleton global
+})
+export class UserService {
+  private apiUrl = 'https://api.example.com/users';
+  
+  // BehaviorSubject para estado reativo
+  private usuarioAtual = new BehaviorSubject<User | null>(null);
+  usuarioAtual$ = this.usuarioAtual.asObservable();
+  
+  constructor(private http: HttpClient) {}
+  
+  // Método que retorna Observable
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(this.apiUrl);
+  }
+  
+  getUserById(id: number): Observable<User> {
+    return this.http.get<User>(\`\${this.apiUrl}/\${id}\`);
+  }
+  
+  createUser(user: User): Observable<User> {
+    return this.http.post<User>(this.apiUrl, user);
+  }
+  
+  setUsuarioAtual(user: User) {
+    this.usuarioAtual.next(user);
+  }
+}
+
+// user.component.ts - Usando o serviço
+import { Component, OnInit } from '@angular/core';
+import { UserService } from './user.service';
+
+@Component({
+  selector: 'app-users',
+  template: \`
+    <ul>
+      <li *ngFor="let user of users">{{ user.name }}</li>
+    </ul>
+  \`
+})
+export class UsersComponent implements OnInit {
+  users: User[] = [];
+  
+  constructor(private userService: UserService) {}
+  
+  ngOnInit() {
+    this.userService.getUsers().subscribe(users => {
+      this.users = users;
+    });
+  }
+}
+`
+    },
+    {
+      title: 'Angular: Diretivas Built-in',
+      content: `
+<!-- *ngIf - Renderização condicional -->
+<div *ngIf="isLoggedIn">Bem-vindo!</div>
+<div *ngIf="isLoggedIn; else loginTemplate">Logado</div>
+<ng-template #loginTemplate>
+  <button>Fazer Login</button>
+</ng-template>
+
+<!-- *ngIf com variável local -->
+<div *ngIf="user$ | async as user">
+  Olá, {{ user.name }}
+</div>
+
+<!-- *ngFor - Loop -->
+<ul>
+  <li *ngFor="let item of items; let i = index; let first = first; let last = last">
+    {{ i + 1 }}. {{ item.name }}
+    <span *ngIf="first">(Primeiro)</span>
+  </li>
+</ul>
+
+<!-- *ngFor com trackBy para performance -->
+<li *ngFor="let item of items; trackBy: trackById">
+  {{ item.name }}
+</li>
+<!-- No componente: trackById(index: number, item: Item) { return item.id; } -->
+
+<!-- [ngSwitch] - Switch case -->
+<div [ngSwitch]="status">
+  <p *ngSwitchCase="'ativo'">Usuário ativo</p>
+  <p *ngSwitchCase="'inativo'">Usuário inativo</p>
+  <p *ngSwitchDefault>Status desconhecido</p>
+</div>
+
+<!-- [ngClass] - Classes condicionais -->
+<div [ngClass]="{ 'active': isActive, 'disabled': isDisabled }"></div>
+<div [ngClass]="['class1', 'class2']"></div>
+<div [class.active]="isActive"></div>
+
+<!-- [ngStyle] - Estilos inline condicionais -->
+<div [ngStyle]="{ 'color': isError ? 'red' : 'green' }"></div>
+<div [style.fontSize.px]="tamanho"></div>
+`
+    },
+    {
+      title: 'Angular: Pipes',
+      content: `
+<!-- Pipes Built-in -->
+
+<!-- Texto -->
+{{ 'hello world' | uppercase }}     <!-- HELLO WORLD -->
+{{ 'HELLO WORLD' | lowercase }}     <!-- hello world -->
+{{ 'hello world' | titlecase }}     <!-- Hello World -->
+
+<!-- Números -->
+{{ 3.14159 | number:'1.2-2' }}      <!-- 3.14 (mín 1 inteiro, 2-2 decimais) -->
+{{ 0.25 | percent }}                 <!-- 25% -->
+{{ 1234.5 | currency:'BRL' }}       <!-- R$1,234.50 -->
+
+<!-- Datas -->
+{{ dataAtual | date }}               <!-- Jan 15, 2024 -->
+{{ dataAtual | date:'short' }}       <!-- 1/15/24, 10:30 AM -->
+{{ dataAtual | date:'fullDate' }}    <!-- Monday, January 15, 2024 -->
+{{ dataAtual | date:'dd/MM/yyyy' }}  <!-- 15/01/2024 -->
+{{ dataAtual | date:'HH:mm:ss' }}    <!-- 10:30:45 -->
+
+<!-- JSON (debug) -->
+{{ objeto | json }}
+
+<!-- Async (subscribe automático) -->
+{{ observable$ | async }}
+<div *ngIf="usuario$ | async as usuario">
+  {{ usuario.nome }}
+</div>
+
+<!-- Slice (array/string) -->
+{{ [1,2,3,4,5] | slice:1:3 }}        <!-- [2,3] -->
+{{ 'Hello World' | slice:0:5 }}     <!-- Hello -->
+
+<!-- KeyValue (para objetos) -->
+<div *ngFor="let item of objeto | keyvalue">
+  {{ item.key }}: {{ item.value }}
+</div>
+
+<!-- Pipe Personalizado -->
+// truncate.pipe.ts
+import { Pipe, PipeTransform } from '@angular/core';
+
+@Pipe({ name: 'truncate' })
+export class TruncatePipe implements PipeTransform {
+  transform(value: string, limit: number = 50): string {
+    return value.length > limit ? value.substring(0, limit) + '...' : value;
+  }
+}
+// Uso: {{ textoLongo | truncate:100 }}
+`
+    },
+    {
+      title: 'Angular: RxJS e Observables',
+      content: `
+import { Observable, of, from, interval, Subject, BehaviorSubject } from 'rxjs';
+import { map, filter, tap, catchError, switchMap, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
+// Criando Observables
+const numeros$ = of(1, 2, 3, 4, 5);
+const array$ = from([1, 2, 3]);
+const intervalo$ = interval(1000); // Emite a cada segundo
+
+// Operadores comuns
+numeros$.pipe(
+  filter(n => n % 2 === 0),  // Filtra pares
+  map(n => n * 10),          // Multiplica por 10
+  tap(n => console.log(n))   // Side effect (debug)
+).subscribe(resultado => console.log(resultado));
+
+// HTTP com RxJS
+this.http.get<User[]>('/api/users').pipe(
+  map(users => users.filter(u => u.active)),
+  catchError(error => {
+    console.error('Erro:', error);
+    return of([]); // Retorna array vazio em caso de erro
+  })
+).subscribe(users => this.users = users);
+
+// switchMap - Cancela requisição anterior
+this.searchInput.valueChanges.pipe(
+  debounceTime(300),           // Espera 300ms após parar de digitar
+  distinctUntilChanged(),      // Ignora se valor não mudou
+  switchMap(termo => this.http.get(\`/api/search?q=\${termo}\`))
+).subscribe(resultados => this.resultados = resultados);
+
+// Subject para eventos
+private destroy$ = new Subject<void>();
+
+ngOnInit() {
+  this.dados$.pipe(
+    takeUntil(this.destroy$)  // Cancela quando destroy$ emitir
+  ).subscribe(dados => this.dados = dados);
+}
+
+ngOnDestroy() {
+  this.destroy$.next();
+  this.destroy$.complete();
+}
+
+// BehaviorSubject para estado
+private estado$ = new BehaviorSubject<Estado>(estadoInicial);
+estado$$ = this.estado$.asObservable();
+
+atualizarEstado(novoEstado: Estado) {
+  this.estado$.next(novoEstado);
+}
+`
+    },
+    {
+      title: 'Angular: Formulários Reativos',
+      content: `
+// app.module.ts
+import { ReactiveFormsModule } from '@angular/forms';
+
+// user-form.component.ts
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
+
+@Component({
+  selector: 'app-user-form',
+  template: \`
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <input formControlName="nome" placeholder="Nome">
+      <div *ngIf="userForm.get('nome')?.errors?.['required'] && userForm.get('nome')?.touched">
+        Nome é obrigatório
+      </div>
+      
+      <input formControlName="email" placeholder="Email">
+      <div *ngIf="userForm.get('email')?.errors?.['email']">
+        Email inválido
+      </div>
+      
+      <!-- Grupo aninhado -->
+      <div formGroupName="endereco">
+        <input formControlName="rua" placeholder="Rua">
+        <input formControlName="cidade" placeholder="Cidade">
+      </div>
+      
+      <!-- FormArray -->
+      <div formArrayName="telefones">
+        <div *ngFor="let tel of telefones.controls; let i = index">
+          <input [formControlName]="i" placeholder="Telefone">
+          <button type="button" (click)="removerTelefone(i)">X</button>
+        </div>
+        <button type="button" (click)="adicionarTelefone()">+ Telefone</button>
+      </div>
+      
+      <button type="submit" [disabled]="userForm.invalid">Salvar</button>
+    </form>
+  \`
+})
+export class UserFormComponent implements OnInit {
+  userForm!: FormGroup;
+  
+  constructor(private fb: FormBuilder) {}
+  
+  ngOnInit() {
+    this.userForm = this.fb.group({
+      nome: ['', [Validators.required, Validators.minLength(3)]],
+      email: ['', [Validators.required, Validators.email]],
+      endereco: this.fb.group({
+        rua: [''],
+        cidade: ['']
+      }),
+      telefones: this.fb.array([])
+    });
+  }
+  
+  get telefones() {
+    return this.userForm.get('telefones') as FormArray;
+  }
+  
+  adicionarTelefone() {
+    this.telefones.push(this.fb.control(''));
+  }
+  
+  removerTelefone(index: number) {
+    this.telefones.removeAt(index);
+  }
+  
+  onSubmit() {
+    if (this.userForm.valid) {
+      console.log(this.userForm.value);
+    }
+  }
+}
+`
     }
   ],
   "Backend": [
