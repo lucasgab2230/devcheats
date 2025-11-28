@@ -232,6 +232,1788 @@ dev = Pessoa.new("Yukihiro")
 puts dev.nome
 `,
     },
+    {
+      title: 'C: Fundamentos e Ponteiros',
+      content: `
+// Estrutura básica de um programa C
+#include <stdio.h>
+
+int main() {
+    // Variáveis e tipos
+    int idade = 25;
+    float altura = 1.75;
+    char inicial = 'A';
+    char nome[] = "Carlos";
+    
+    printf("Nome: %s, Idade: %d\\n", nome, idade);
+    
+    // Ponteiros
+    int *ptr = &idade;
+    printf("Valor: %d, Endereço: %p\\n", *ptr, (void*)ptr);
+    
+    // Arrays
+    int numeros[5] = {1, 2, 3, 4, 5};
+    for (int i = 0; i < 5; i++) {
+        printf("%d ", numeros[i]);
+    }
+    
+    return 0;
+}
+
+// Structs
+struct Pessoa {
+    char nome[50];
+    int idade;
+};
+
+struct Pessoa p1 = {"Maria", 30};
+`,
+    },
+    {
+      title: 'C++: Classes e STL',
+      content: `
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+
+using namespace std;
+
+// Classes em C++
+class Retangulo {
+private:
+    double largura, altura;
+    
+public:
+    // Construtor
+    Retangulo(double l, double a) : largura(l), altura(a) {}
+    
+    // Métodos
+    double area() const { return largura * altura; }
+    double perimetro() const { return 2 * (largura + altura); }
+};
+
+int main() {
+    // STL - Vector
+    vector<int> nums = {5, 2, 8, 1, 9};
+    
+    // Ordenar
+    sort(nums.begin(), nums.end());
+    
+    // Iterar
+    for (const auto& n : nums) {
+        cout << n << " ";
+    }
+    
+    // Objeto
+    Retangulo r(10, 5);
+    cout << "Área: " << r.area() << endl;
+    
+    return 0;
+}
+`,
+    },
+    {
+      title: 'C#: Fundamentos e LINQ',
+      content: `
+using System;
+using System.Linq;
+using System.Collections.Generic;
+
+// Classe principal
+class Program {
+    static void Main() {
+        // Variáveis
+        string nome = "C#";
+        int versao = 12;
+        var lista = new List<int> { 1, 2, 3, 4, 5 };
+        
+        // LINQ - Consultas
+        var pares = lista.Where(x => x % 2 == 0);
+        var dobrados = lista.Select(x => x * 2);
+        var soma = lista.Sum();
+        
+        Console.WriteLine($"Soma: {soma}");
+        
+        // Classes
+        var pessoa = new Pessoa("Ana", 25);
+        Console.WriteLine(pessoa.Apresentar());
+    }
+}
+
+// Classe com propriedades
+class Pessoa {
+    public string Nome { get; set; }
+    public int Idade { get; set; }
+    
+    public Pessoa(string nome, int idade) {
+        Nome = nome;
+        Idade = idade;
+    }
+    
+    public string Apresentar() => $"Olá, sou {Nome}!";
+}
+`,
+    },
+    {
+      title: 'Kotlin: Fundamentos',
+      content: `
+// Função principal
+fun main() {
+    // Variáveis (val = imutável, var = mutável)
+    val nome: String = "Kotlin"
+    var contador = 0
+    
+    // Null Safety
+    var nullable: String? = null
+    val tamanho = nullable?.length ?: 0 // Elvis operator
+    
+    // Funções
+    println(somar(5, 3))
+    println(saudar("Mundo"))
+    
+    // Data Classes
+    val pessoa = Pessoa("Ana", 25)
+    println(pessoa)
+    
+    // Collections
+    val numeros = listOf(1, 2, 3, 4, 5)
+    val pares = numeros.filter { it % 2 == 0 }
+    val dobrados = numeros.map { it * 2 }
+}
+
+// Função com expressão
+fun somar(a: Int, b: Int) = a + b
+
+// Função com parâmetro padrão
+fun saudar(nome: String = "Amigo") = "Olá, $nome!"
+
+// Data Class (gera equals, hashCode, toString, copy)
+data class Pessoa(val nome: String, val idade: Int)
+`,
+    },
+    {
+      title: 'Swift: Fundamentos',
+      content: `
+import Foundation
+
+// Variáveis e Constantes
+let constante = "Não muda"
+var variavel = "Pode mudar"
+
+// Tipos
+let inteiro: Int = 42
+let decimal: Double = 3.14
+let booleano: Bool = true
+let array: [String] = ["a", "b", "c"]
+let dicionario: [String: Int] = ["um": 1, "dois": 2]
+
+// Optionals
+var opcional: String? = nil
+opcional = "Agora tem valor"
+
+// Unwrapping
+if let valor = opcional {
+    print("Valor: \\(valor)")
+}
+
+// Guard
+func processar(valor: String?) {
+    guard let v = valor else {
+        print("Valor é nil")
+        return
+    }
+    print("Processando: \\(v)")
+}
+
+// Funções
+func saudar(nome: String, com saudacao: String = "Olá") -> String {
+    return "\\(saudacao), \\(nome)!"
+}
+
+// Closures
+let dobrar = { (n: Int) -> Int in n * 2 }
+let nums = [1, 2, 3].map { $0 * 2 }
+`,
+    },
+    {
+      title: 'Swift: Classes e Structs',
+      content: `
+// Struct (tipo por valor)
+struct Ponto {
+    var x: Double
+    var y: Double
+    
+    // Método
+    func distanciaOrigem() -> Double {
+        return (x * x + y * y).squareRoot()
+    }
+    
+    // Método mutating (modifica self)
+    mutating func mover(dx: Double, dy: Double) {
+        x += dx
+        y += dy
+    }
+}
+
+// Class (tipo por referência)
+class Veiculo {
+    var velocidade: Double = 0
+    
+    func acelerar() {
+        velocidade += 10
+    }
+}
+
+// Herança
+class Carro: Veiculo {
+    var marchas: Int = 6
+    
+    override func acelerar() {
+        super.acelerar()
+        velocidade += 5
+    }
+}
+
+// Protocolos (similar a interfaces)
+protocol Descritivel {
+    var descricao: String { get }
+}
+
+extension Ponto: Descritivel {
+    var descricao: String {
+        return "(\\(x), \\(y))"
+    }
+}
+`,
+    },
+    {
+      title: 'Scala: Fundamentos',
+      content: `
+// Objeto principal
+object Main extends App {
+  // Variáveis (val = imutável, var = mutável)
+  val nome: String = "Scala"
+  var contador = 0
+  
+  // Funções
+  def somar(a: Int, b: Int): Int = a + b
+  
+  // Funções anônimas
+  val dobrar = (x: Int) => x * 2
+  
+  // Collections
+  val lista = List(1, 2, 3, 4, 5)
+  val pares = lista.filter(_ % 2 == 0)
+  val dobrados = lista.map(_ * 2)
+  val soma = lista.reduce(_ + _)
+  
+  println(s"Soma: $soma")
+}
+
+// Case Classes (imutáveis por padrão)
+case class Pessoa(nome: String, idade: Int)
+
+val p1 = Pessoa("Ana", 25)
+val p2 = p1.copy(idade = 26)
+
+// Pattern Matching
+def descrever(x: Any): String = x match {
+  case 0 => "zero"
+  case i: Int if i > 0 => "positivo"
+  case s: String => s"string: $s"
+  case _ => "desconhecido"
+}
+
+// Traits (similar a interfaces)
+trait Saudavel {
+  def saudar(): String = "Olá!"
+}
+`,
+    },
+    {
+      title: 'PHP: Fundamentos',
+      content: `
+<?php
+// Variáveis (tipagem dinâmica)
+$nome = "PHP";
+$versao = 8.3;
+$ativo = true;
+$frutas = ["maçã", "banana", "laranja"];
+
+// Arrays associativos
+$pessoa = [
+    "nome" => "João",
+    "idade" => 30
+];
+
+// Estruturas de controle
+if ($versao >= 8) {
+    echo "PHP moderno!\\n";
+}
+
+// Loops
+foreach ($frutas as $fruta) {
+    echo "$fruta\\n";
+}
+
+// Funções
+function saudar(string $nome): string {
+    return "Olá, $nome!";
+}
+
+echo saudar("Mundo");
+
+// Arrow functions (PHP 7.4+)
+$dobrar = fn($n) => $n * 2;
+
+// Null coalescing
+$valor = $pessoa["email"] ?? "Não informado";
+
+// Classes
+class Usuario {
+    public function __construct(
+        private string $nome,
+        private int $idade
+    ) {}
+    
+    public function getNome(): string {
+        return $this->nome;
+    }
+}
+?>
+`,
+    },
+    {
+      title: 'Perl: Fundamentos',
+      content: `
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Variáveis escalares ($)
+my $nome = "Perl";
+my $numero = 42;
+
+# Arrays (@)
+my @frutas = ("maçã", "banana", "laranja");
+push @frutas, "uva";
+my $primeira = $frutas[0];
+
+# Hashes (%)
+my %pessoa = (
+    nome => "João",
+    idade => 30
+);
+print "Nome: $pessoa{nome}\\n";
+
+# Estruturas de controle
+if ($numero > 40) {
+    print "Maior que 40\\n";
+}
+
+# Loops
+foreach my $fruta (@frutas) {
+    print "$fruta\\n";
+}
+
+for my $i (1..5) {
+    print "$i ";
+}
+
+# Subrotinas
+sub saudar {
+    my ($nome) = @_;
+    return "Olá, $nome!";
+}
+
+print saudar("Mundo");
+
+# Expressões regulares
+my $texto = "O rato roeu a roupa";
+if ($texto =~ /rato/) {
+    print "Encontrou 'rato'\\n";
+}
+$texto =~ s/rato/gato/g; # Substituição
+`,
+    },
+    {
+      title: 'Lua: Fundamentos',
+      content: `
+-- Comentário de linha
+
+--[[
+  Comentário
+  de bloco
+]]
+
+-- Variáveis (escopo global por padrão)
+local nome = "Lua"
+local numero = 42
+local ativo = true
+
+-- Tabelas (estrutura de dados universal)
+local frutas = {"maçã", "banana", "laranja"}
+print(frutas[1]) -- Índices começam em 1
+
+local pessoa = {
+    nome = "João",
+    idade = 30
+}
+print(pessoa.nome)
+
+-- Estruturas de controle
+if numero > 40 then
+    print("Maior que 40")
+elseif numero == 40 then
+    print("Igual a 40")
+else
+    print("Menor que 40")
+end
+
+-- Loops
+for i = 1, 5 do
+    print(i)
+end
+
+for i, fruta in ipairs(frutas) do
+    print(i, fruta)
+end
+
+-- Funções
+local function saudar(nome)
+    return "Olá, " .. nome .. "!"
+end
+
+-- Funções são valores
+local dobrar = function(n)
+    return n * 2
+end
+
+-- Closures
+local function contador()
+    local count = 0
+    return function()
+        count = count + 1
+        return count
+    end
+end
+`,
+    },
+    {
+      title: 'Haskell: Fundamentos',
+      content: `
+-- Tipos básicos
+nome :: String
+nome = "Haskell"
+
+numero :: Int
+numero = 42
+
+decimal :: Double
+decimal = 3.14
+
+-- Listas
+numeros :: [Int]
+numeros = [1, 2, 3, 4, 5]
+
+-- Concatenação
+lista = [1, 2] ++ [3, 4]  -- [1, 2, 3, 4]
+cons = 0 : numeros        -- [0, 1, 2, 3, 4, 5]
+
+-- Funções
+somar :: Int -> Int -> Int
+somar a b = a + b
+
+-- Função com guards
+absoluto :: Int -> Int
+absoluto n
+    | n < 0     = -n
+    | otherwise = n
+
+-- Pattern matching
+fatorial :: Int -> Int
+fatorial 0 = 1
+fatorial n = n * fatorial (n - 1)
+
+-- List comprehension
+pares = [x | x <- [1..10], x \`mod\` 2 == 0]
+
+-- Map, filter, fold
+dobrados = map (*2) numeros
+positivos = filter (>0) [-2, -1, 0, 1, 2]
+soma = foldl (+) 0 numeros
+
+-- Tipos algébricos
+data Cor = Vermelho | Verde | Azul
+
+data Maybe a = Nothing | Just a
+
+-- Funções de ordem superior
+aplicar :: (a -> b) -> a -> b
+aplicar f x = f x
+`,
+    },
+    {
+      title: 'Elixir: Fundamentos',
+      content: `
+# Variáveis (imutáveis)
+nome = "Elixir"
+numero = 42
+
+# Tipos básicos
+lista = [1, 2, 3, 4, 5]
+tupla = {:ok, "sucesso"}
+mapa = %{nome: "João", idade: 30}
+
+# Pattern matching
+{:ok, resultado} = {:ok, "dados"}
+[cabeca | cauda] = [1, 2, 3, 4]
+
+# Funções anônimas
+dobrar = fn x -> x * 2 end
+dobrar.(5)  # => 10
+
+# Pipe operator
+resultado = [1, 2, 3]
+  |> Enum.map(&(&1 * 2))
+  |> Enum.filter(&(&1 > 2))
+  |> Enum.sum()
+
+# Módulos e funções
+defmodule Calculadora do
+  def somar(a, b), do: a + b
+  
+  def fatorial(0), do: 1
+  def fatorial(n), do: n * fatorial(n - 1)
+  
+  # Função privada
+  defp helper(x), do: x + 1
+end
+
+# Recursão com acumulador
+defmodule Lista do
+  def soma(lista), do: soma(lista, 0)
+  defp soma([], acc), do: acc
+  defp soma([h | t], acc), do: soma(t, acc + h)
+end
+
+# Structs
+defmodule Usuario do
+  defstruct nome: "", idade: 0
+end
+
+usuario = %Usuario{nome: "Ana", idade: 25}
+`,
+    },
+    {
+      title: 'Clojure: Fundamentos',
+      content: `
+;; Definindo valores (imutáveis)
+(def nome "Clojure")
+(def numero 42)
+
+;; Tipos de dados
+(def lista '(1 2 3 4 5))       ; Lista ligada
+(def vetor [1 2 3 4 5])        ; Vetor
+(def conjunto #{1 2 3 4 5})    ; Conjunto
+(def mapa {:nome "João" :idade 30}) ; Mapa
+
+;; Funções
+(defn somar [a b]
+  (+ a b))
+
+(defn saudar
+  "Saúda uma pessoa"
+  [nome]
+  (str "Olá, " nome "!"))
+
+;; Funções anônimas
+(def dobrar #(* % 2))
+(def soma (fn [a b] (+ a b)))
+
+;; Funções de coleção
+(map inc [1 2 3])              ; => (2 3 4)
+(filter even? [1 2 3 4 5])     ; => (2 4)
+(reduce + [1 2 3 4 5])         ; => 15
+
+;; Threading macros
+(-> 5
+    (* 2)
+    (+ 3))  ; => 13
+
+(->> [1 2 3 4 5]
+     (map inc)
+     (filter even?)
+     (reduce +))
+
+;; Condicional
+(if (> numero 40)
+  "maior"
+  "menor")
+
+(cond
+  (< numero 0) "negativo"
+  (= numero 0) "zero"
+  :else "positivo")
+
+;; Let binding (variáveis locais)
+(let [x 5
+      y 10]
+  (+ x y))
+`,
+    },
+    {
+      title: 'F#: Fundamentos',
+      content: `
+// Variáveis (imutáveis por padrão)
+let nome = "F#"
+let mutable contador = 0  // Mutável
+
+// Tipos
+let inteiro: int = 42
+let decimal: float = 3.14
+let lista = [1; 2; 3; 4; 5]
+let tupla = (1, "dois", 3.0)
+
+// Funções
+let somar a b = a + b
+let dobrar = fun x -> x * 2
+
+// Pipeline
+let resultado =
+    [1; 2; 3; 4; 5]
+    |> List.filter (fun x -> x % 2 = 0)
+    |> List.map (fun x -> x * 2)
+    |> List.sum
+
+// Pattern matching
+let descrever x =
+    match x with
+    | 0 -> "zero"
+    | n when n > 0 -> "positivo"
+    | _ -> "negativo"
+
+// Tipos discriminados (unions)
+type Forma =
+    | Circulo of raio: float
+    | Retangulo of largura: float * altura: float
+
+let area forma =
+    match forma with
+    | Circulo r -> System.Math.PI * r * r
+    | Retangulo (l, a) -> l * a
+
+// Records
+type Pessoa = { Nome: string; Idade: int }
+let pessoa = { Nome = "Ana"; Idade = 25 }
+let maisVelho = { pessoa with Idade = 26 }
+
+// Recursão
+let rec fatorial n =
+    if n <= 1 then 1
+    else n * fatorial (n - 1)
+`,
+    },
+    {
+      title: 'TypeScript: Fundamentos Avançados',
+      content: `
+// Tipos básicos
+let nome: string = "TypeScript";
+let idade: number = 30;
+let ativo: boolean = true;
+let lista: number[] = [1, 2, 3];
+let tupla: [string, number] = ["idade", 30];
+
+// Enums
+enum Status {
+    Ativo = "ATIVO",
+    Inativo = "INATIVO"
+}
+
+// Union Types
+type StringOuNumero = string | number;
+
+// Type Aliases
+type Ponto = {
+    x: number;
+    y: number;
+};
+
+// Interfaces
+interface Usuario {
+    id: number;
+    nome: string;
+    email?: string;  // Opcional
+    readonly cpf: string;  // Somente leitura
+}
+
+// Extends
+interface Admin extends Usuario {
+    nivel: number;
+}
+
+// Intersection Types
+type Funcionario = Usuario & { cargo: string };
+
+// Generics
+function primeiro<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+
+// Type assertions
+let valor: unknown = "texto";
+let tamanho = (valor as string).length;
+
+// Type guards
+function isString(x: unknown): x is string {
+    return typeof x === "string";
+}
+
+// Keyof
+type Chaves = keyof Usuario;  // "id" | "nome" | "email" | "cpf"
+`,
+    },
+    {
+      title: 'Python: Decorators e Context Managers',
+      content: `
+import functools
+import time
+
+# Decorator simples
+def meu_decorator(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        print(f"Chamando {func.__name__}")
+        resultado = func(*args, **kwargs)
+        print(f"{func.__name__} retornou {resultado}")
+        return resultado
+    return wrapper
+
+@meu_decorator
+def somar(a, b):
+    return a + b
+
+# Decorator com parâmetros
+def repetir(vezes):
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            for _ in range(vezes):
+                resultado = func(*args, **kwargs)
+            return resultado
+        return wrapper
+    return decorator
+
+@repetir(3)
+def saudar(nome):
+    print(f"Olá, {nome}!")
+
+# Decorator para medir tempo
+def timer(func):
+    @functools.wraps(func)
+    def wrapper(*args, **kwargs):
+        inicio = time.time()
+        resultado = func(*args, **kwargs)
+        fim = time.time()
+        print(f"{func.__name__} executou em {fim - inicio:.4f}s")
+        return resultado
+    return wrapper
+
+# Context Manager com classe
+class Arquivo:
+    def __init__(self, nome, modo):
+        self.nome = nome
+        self.modo = modo
+        
+    def __enter__(self):
+        self.arquivo = open(self.nome, self.modo)
+        return self.arquivo
+        
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.arquivo.close()
+
+# Context Manager com contextlib
+from contextlib import contextmanager
+
+@contextmanager
+def temporizador():
+    inicio = time.time()
+    yield
+    print(f"Tempo: {time.time() - inicio:.4f}s")
+`,
+    },
+    {
+      title: 'Python: Async/Await',
+      content: `
+import asyncio
+import aiohttp
+
+# Função assíncrona básica
+async def saudar():
+    print("Olá")
+    await asyncio.sleep(1)
+    print("Mundo")
+
+# Executar
+asyncio.run(saudar())
+
+# Múltiplas coroutines
+async def tarefa(nome, segundos):
+    print(f"Iniciando {nome}")
+    await asyncio.sleep(segundos)
+    print(f"Finalizando {nome}")
+    return nome
+
+async def main():
+    # Executar em paralelo
+    resultados = await asyncio.gather(
+        tarefa("A", 2),
+        tarefa("B", 1),
+        tarefa("C", 3)
+    )
+    print(resultados)
+
+# HTTP assíncrono com aiohttp
+async def buscar_dados(url):
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.json()
+
+async def buscar_multiplos(urls):
+    tarefas = [buscar_dados(url) for url in urls]
+    return await asyncio.gather(*tarefas)
+
+# Queue assíncrona
+async def produtor(queue, n):
+    for i in range(n):
+        await queue.put(i)
+        await asyncio.sleep(0.1)
+
+async def consumidor(queue):
+    while True:
+        item = await queue.get()
+        print(f"Processando: {item}")
+        queue.task_done()
+
+# Timeout
+async def com_timeout():
+    try:
+        await asyncio.wait_for(tarefa("X", 5), timeout=2.0)
+    except asyncio.TimeoutError:
+        print("Timeout!")
+`,
+    },
+    {
+      title: 'Python: Type Hints',
+      content: `
+from typing import List, Dict, Optional, Union, Tuple, Callable
+from typing import TypeVar, Generic, Protocol
+from dataclasses import dataclass
+
+# Tipos básicos
+def saudar(nome: str) -> str:
+    return f"Olá, {nome}!"
+
+# Collections
+def processar(items: List[int]) -> Dict[str, int]:
+    return {"soma": sum(items), "count": len(items)}
+
+# Optional (pode ser None)
+def buscar(id: int) -> Optional[str]:
+    return None
+
+# Union (múltiplos tipos)
+def formatar(valor: Union[int, float]) -> str:
+    return f"{valor:.2f}"
+
+# Callable (funções como parâmetros)
+def aplicar(func: Callable[[int], int], valor: int) -> int:
+    return func(valor)
+
+# TypeVar (generics)
+T = TypeVar('T')
+
+def primeiro(lista: List[T]) -> Optional[T]:
+    return lista[0] if lista else None
+
+# Protocol (duck typing estrutural)
+class Iteravel(Protocol):
+    def __iter__(self): ...
+
+# Dataclass com tipos
+@dataclass
+class Usuario:
+    nome: str
+    idade: int
+    email: Optional[str] = None
+
+# Generic class
+class Caixa(Generic[T]):
+    def __init__(self, conteudo: T) -> None:
+        self.conteudo = conteudo
+    
+    def obter(self) -> T:
+        return self.conteudo
+
+# Alias de tipo
+Coordenada = Tuple[float, float]
+Matriz = List[List[int]]
+
+def distancia(p1: Coordenada, p2: Coordenada) -> float:
+    return ((p2[0] - p1[0])**2 + (p2[1] - p1[1])**2)**0.5
+`,
+    },
+    {
+      title: 'JavaScript: Promises e Error Handling',
+      content: `
+// Criando uma Promise
+const minhaPromise = new Promise((resolve, reject) => {
+    const sucesso = true;
+    
+    if (sucesso) {
+        resolve("Operação bem-sucedida!");
+    } else {
+        reject(new Error("Algo deu errado"));
+    }
+});
+
+// Consumindo Promise
+minhaPromise
+    .then(resultado => console.log(resultado))
+    .catch(erro => console.error(erro))
+    .finally(() => console.log("Finalizado"));
+
+// Encadeamento de Promises
+fetch('/api/usuario')
+    .then(response => response.json())
+    .then(usuario => fetch(\`/api/posts/\${usuario.id}\`))
+    .then(response => response.json())
+    .then(posts => console.log(posts))
+    .catch(erro => console.error("Erro:", erro));
+
+// Promise.all - Aguarda todas
+const promises = [
+    fetch('/api/a'),
+    fetch('/api/b'),
+    fetch('/api/c')
+];
+
+Promise.all(promises)
+    .then(responses => Promise.all(responses.map(r => r.json())))
+    .then(dados => console.log(dados));
+
+// Promise.race - Primeira a resolver
+Promise.race(promises).then(primeiro => console.log(primeiro));
+
+// Promise.allSettled - Todas, mesmo com erro
+Promise.allSettled(promises).then(resultados => {
+    resultados.forEach(r => {
+        if (r.status === 'fulfilled') {
+            console.log('Sucesso:', r.value);
+        } else {
+            console.log('Erro:', r.reason);
+        }
+    });
+});
+
+// Error handling customizado
+class APIError extends Error {
+    constructor(message, status) {
+        super(message);
+        this.status = status;
+        this.name = 'APIError';
+    }
+}
+`,
+    },
+    {
+      title: 'JavaScript: Classes e Herança',
+      content: `
+// Classe básica
+class Animal {
+    // Campos privados
+    #id;
+    
+    // Campos estáticos
+    static contador = 0;
+    
+    constructor(nome) {
+        this.nome = nome;
+        this.#id = ++Animal.contador;
+    }
+    
+    // Getter
+    get identificador() {
+        return this.#id;
+    }
+    
+    // Método
+    falar() {
+        console.log(\`\${this.nome} faz um som\`);
+    }
+    
+    // Método estático
+    static criarAnonimo() {
+        return new Animal("Anônimo");
+    }
+}
+
+// Herança
+class Cachorro extends Animal {
+    constructor(nome, raca) {
+        super(nome);  // Chama construtor pai
+        this.raca = raca;
+    }
+    
+    // Override de método
+    falar() {
+        console.log(\`\${this.nome} late: Au au!\`);
+    }
+    
+    // Método próprio
+    buscar() {
+        console.log(\`\${this.nome} está buscando\`);
+    }
+}
+
+// Uso
+const rex = new Cachorro("Rex", "Labrador");
+rex.falar();  // Rex late: Au au!
+rex.buscar();
+
+// Mixins (composição)
+const nadadorMixin = {
+    nadar() {
+        console.log(\`\${this.nome} está nadando\`);
+    }
+};
+
+Object.assign(Cachorro.prototype, nadadorMixin);
+rex.nadar();  // Rex está nadando
+
+// instanceof
+console.log(rex instanceof Cachorro);  // true
+console.log(rex instanceof Animal);    // true
+`,
+    },
+    {
+      title: 'JavaScript: Proxies e Reflect',
+      content: `
+// Proxy básico
+const pessoa = {
+    nome: "João",
+    idade: 30
+};
+
+const handler = {
+    // Intercepta leitura de propriedade
+    get(target, prop, receiver) {
+        console.log(\`Lendo \${prop}\`);
+        return Reflect.get(target, prop, receiver);
+    },
+    
+    // Intercepta escrita
+    set(target, prop, value, receiver) {
+        console.log(\`Setando \${prop} = \${value}\`);
+        return Reflect.set(target, prop, value, receiver);
+    },
+    
+    // Intercepta 'prop in obj'
+    has(target, prop) {
+        console.log(\`Verificando existência de \${prop}\`);
+        return Reflect.has(target, prop);
+    },
+    
+    // Intercepta delete
+    deleteProperty(target, prop) {
+        console.log(\`Deletando \${prop}\`);
+        return Reflect.deleteProperty(target, prop);
+    }
+};
+
+const proxy = new Proxy(pessoa, handler);
+
+// Validação com Proxy
+function criarObjValidado(obj, validacoes) {
+    return new Proxy(obj, {
+        set(target, prop, value) {
+            if (validacoes[prop]) {
+                if (!validacoes[prop](value)) {
+                    throw new Error(\`Valor inválido para \${prop}\`);
+                }
+            }
+            target[prop] = value;
+            return true;
+        }
+    });
+}
+
+const usuario = criarObjValidado({}, {
+    idade: (v) => typeof v === 'number' && v > 0,
+    email: (v) => v.includes('@')
+});
+
+// Proxy para propriedades negativas em array
+function criarArrayNegativo(arr) {
+    return new Proxy(arr, {
+        get(target, prop) {
+            const index = Number(prop);
+            if (index < 0) {
+                prop = target.length + index;
+            }
+            return Reflect.get(target, prop);
+        }
+    });
+}
+
+const arr = criarArrayNegativo([1, 2, 3, 4, 5]);
+console.log(arr[-1]);  // 5
+`,
+    },
+    {
+      title: 'Rust: Traits e Generics',
+      content: `
+// Trait - define comportamento compartilhado
+trait Resumivel {
+    fn resumir(&self) -> String;
+    
+    // Método com implementação padrão
+    fn resumir_autor(&self) -> String {
+        String::from("(Autor desconhecido)")
+    }
+}
+
+struct Artigo {
+    titulo: String,
+    autor: String,
+    conteudo: String,
+}
+
+impl Resumivel for Artigo {
+    fn resumir(&self) -> String {
+        format!("{}, por {}", self.titulo, self.autor)
+    }
+}
+
+// Generics
+fn maior<T: PartialOrd>(lista: &[T]) -> &T {
+    let mut maior = &lista[0];
+    for item in lista {
+        if item > maior {
+            maior = item;
+        }
+    }
+    maior
+}
+
+// Múltiplos trait bounds
+fn processar<T: Resumivel + Clone>(item: &T) -> String {
+    item.resumir()
+}
+
+// Where clause
+fn processar_complexo<T, U>(t: &T, u: &U) -> String
+where
+    T: Resumivel + Clone,
+    U: std::fmt::Debug,
+{
+    format!("{} - {:?}", t.resumir(), u)
+}
+
+// Trait como parâmetro
+fn notificar(item: &impl Resumivel) {
+    println!("Notícia: {}", item.resumir());
+}
+
+// Trait objects (dispatch dinâmico)
+fn criar_resumo(item: &dyn Resumivel) -> String {
+    item.resumir()
+}
+
+// Implementando traits para tipos existentes
+trait Dobrar {
+    fn dobrar(&self) -> Self;
+}
+
+impl Dobrar for i32 {
+    fn dobrar(&self) -> Self {
+        self * 2
+    }
+}
+`,
+    },
+    {
+      title: 'Rust: Error Handling',
+      content: `
+use std::fs::File;
+use std::io::{self, Read};
+
+// Result para erros recuperáveis
+fn ler_arquivo(caminho: &str) -> Result<String, io::Error> {
+    let mut arquivo = File::open(caminho)?;  // ? propaga o erro
+    let mut conteudo = String::new();
+    arquivo.read_to_string(&mut conteudo)?;
+    Ok(conteudo)
+}
+
+// Tratando Result
+fn main() {
+    match ler_arquivo("dados.txt") {
+        Ok(conteudo) => println!("{}", conteudo),
+        Err(erro) => eprintln!("Erro: {}", erro),
+    }
+    
+    // Ou com unwrap_or
+    let dados = ler_arquivo("dados.txt")
+        .unwrap_or_else(|_| String::from("Conteúdo padrão"));
+}
+
+// Erros customizados
+#[derive(Debug)]
+enum MeuErro {
+    Io(io::Error),
+    Parse(std::num::ParseIntError),
+    Personalizado(String),
+}
+
+impl std::fmt::Display for MeuErro {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        match self {
+            MeuErro::Io(e) => write!(f, "Erro de IO: {}", e),
+            MeuErro::Parse(e) => write!(f, "Erro de parse: {}", e),
+            MeuErro::Personalizado(msg) => write!(f, "{}", msg),
+        }
+    }
+}
+
+impl std::error::Error for MeuErro {}
+
+// Convertendo erros
+impl From<io::Error> for MeuErro {
+    fn from(erro: io::Error) -> MeuErro {
+        MeuErro::Io(erro)
+    }
+}
+
+// Option para valores opcionais
+fn dividir(a: i32, b: i32) -> Option<i32> {
+    if b == 0 {
+        None
+    } else {
+        Some(a / b)
+    }
+}
+
+// Combinando Options
+let resultado = dividir(10, 2)
+    .map(|x| x * 2)
+    .filter(|&x| x > 5)
+    .unwrap_or(0);
+`,
+    },
+    {
+      title: 'Go: Structs e Interfaces',
+      content: `
+package main
+
+import (
+	"fmt"
+	"math"
+)
+
+// Struct
+type Retangulo struct {
+	Largura  float64
+	Altura   float64
+}
+
+// Método com receiver
+func (r Retangulo) Area() float64 {
+	return r.Largura * r.Altura
+}
+
+// Método com pointer receiver (pode modificar)
+func (r *Retangulo) Escalar(fator float64) {
+	r.Largura *= fator
+	r.Altura *= fator
+}
+
+// Interface
+type Forma interface {
+	Area() float64
+	Perimetro() float64
+}
+
+// Circulo implementa Forma
+type Circulo struct {
+	Raio float64
+}
+
+func (c Circulo) Area() float64 {
+	return math.Pi * c.Raio * c.Raio
+}
+
+func (c Circulo) Perimetro() float64 {
+	return 2 * math.Pi * c.Raio
+}
+
+// Função que aceita interface
+func DescreverForma(f Forma) {
+	fmt.Printf("Área: %.2f, Perímetro: %.2f\\n", f.Area(), f.Perimetro())
+}
+
+// Embedding (composição)
+type Animal struct {
+	Nome string
+}
+
+func (a Animal) Falar() {
+	fmt.Println(a.Nome, "faz um som")
+}
+
+type Cachorro struct {
+	Animal  // Embedding
+	Raca string
+}
+
+func main() {
+	c := Circulo{Raio: 5}
+	DescreverForma(c)
+	
+	dog := Cachorro{
+		Animal: Animal{Nome: "Rex"},
+		Raca:   "Labrador",
+	}
+	dog.Falar()  // Método herdado
+}
+`,
+    },
+    {
+      title: 'Go: Error Handling e Defer',
+      content: `
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+)
+
+// Função que retorna erro
+func dividir(a, b float64) (float64, error) {
+	if b == 0 {
+		return 0, errors.New("divisão por zero")
+	}
+	return a / b, nil
+}
+
+// Erro customizado
+type MeuErro struct {
+	Mensagem string
+	Codigo   int
+}
+
+func (e *MeuErro) Error() string {
+	return fmt.Sprintf("Erro %d: %s", e.Codigo, e.Mensagem)
+}
+
+// Defer - executa ao sair da função
+func lerArquivo(nome string) error {
+	arquivo, err := os.Open(nome)
+	if err != nil {
+		return err
+	}
+	defer arquivo.Close()  // Garante fechamento
+	
+	// Processar arquivo...
+	return nil
+}
+
+// Múltiplos defers (LIFO - último a entrar, primeiro a sair)
+func exemplo() {
+	defer fmt.Println("Terceiro")
+	defer fmt.Println("Segundo")
+	defer fmt.Println("Primeiro")
+	// Imprime: Primeiro, Segundo, Terceiro
+}
+
+// Panic e Recover
+func funcaoPerigosa() {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recuperado de:", r)
+		}
+	}()
+	
+	panic("algo terrível aconteceu")
+}
+
+// Wrapping errors (Go 1.13+)
+func processar() error {
+	err := lerArquivo("dados.txt")
+	if err != nil {
+		return fmt.Errorf("falha ao processar: %w", err)
+	}
+	return nil
+}
+
+func main() {
+	resultado, err := dividir(10, 0)
+	if err != nil {
+		fmt.Println("Erro:", err)
+		return
+	}
+	fmt.Println("Resultado:", resultado)
+	
+	// Verificar tipo de erro
+	if errors.Is(err, os.ErrNotExist) {
+		fmt.Println("Arquivo não existe")
+	}
+}
+`,
+    },
+    {
+      title: 'Java: Streams e Lambda',
+      content: `
+import java.util.*;
+import java.util.stream.*;
+
+public class StreamsDemo {
+    public static void main(String[] args) {
+        List<String> nomes = Arrays.asList("Ana", "Bruno", "Carlos", "Diana");
+        
+        // Lambda básico
+        nomes.forEach(nome -> System.out.println(nome));
+        
+        // Method reference
+        nomes.forEach(System.out::println);
+        
+        // Filter
+        List<String> filtrados = nomes.stream()
+            .filter(n -> n.startsWith("A"))
+            .collect(Collectors.toList());
+        
+        // Map
+        List<Integer> tamanhos = nomes.stream()
+            .map(String::length)
+            .collect(Collectors.toList());
+        
+        // Reduce
+        int somaCaracteres = nomes.stream()
+            .mapToInt(String::length)
+            .sum();
+        
+        // Sorted
+        List<String> ordenados = nomes.stream()
+            .sorted()
+            .collect(Collectors.toList());
+        
+        // Find
+        Optional<String> primeiro = nomes.stream()
+            .filter(n -> n.length() > 4)
+            .findFirst();
+        
+        // AllMatch, AnyMatch, NoneMatch
+        boolean todosComA = nomes.stream()
+            .allMatch(n -> n.contains("a"));
+        
+        // Collectors
+        Map<Integer, List<String>> porTamanho = nomes.stream()
+            .collect(Collectors.groupingBy(String::length));
+        
+        String concatenado = nomes.stream()
+            .collect(Collectors.joining(", "));
+        
+        // IntStream, LongStream, DoubleStream
+        int soma = IntStream.range(1, 10).sum();
+        
+        // Parallel streams
+        long count = nomes.parallelStream()
+            .filter(n -> n.length() > 3)
+            .count();
+    }
+}
+`,
+    },
+    {
+      title: 'Java: Generics',
+      content: `
+import java.util.*;
+
+// Classe genérica
+public class Caixa<T> {
+    private T conteudo;
+    
+    public void guardar(T item) {
+        this.conteudo = item;
+    }
+    
+    public T obter() {
+        return conteudo;
+    }
+}
+
+// Múltiplos parâmetros de tipo
+class Par<K, V> {
+    private K chave;
+    private V valor;
+    
+    public Par(K chave, V valor) {
+        this.chave = chave;
+        this.valor = valor;
+    }
+}
+
+// Bounded type parameters
+class Calculadora {
+    // T deve ser Number ou subclasse
+    public static <T extends Number> double somar(T a, T b) {
+        return a.doubleValue() + b.doubleValue();
+    }
+    
+    // Múltiplos bounds
+    public static <T extends Comparable<T> & Cloneable> T maior(T a, T b) {
+        return a.compareTo(b) > 0 ? a : b;
+    }
+}
+
+// Wildcards
+class ProcessadorLista {
+    // Upper bound: aceita List<Number> ou List<subclasse de Number>
+    public static double soma(List<? extends Number> lista) {
+        return lista.stream()
+            .mapToDouble(Number::doubleValue)
+            .sum();
+    }
+    
+    // Lower bound: aceita List<Integer> ou List<superclasse de Integer>
+    public static void adicionar(List<? super Integer> lista, int valor) {
+        lista.add(valor);
+    }
+    
+    // Unbounded: aceita qualquer List
+    public static void imprimir(List<?> lista) {
+        for (Object item : lista) {
+            System.out.println(item);
+        }
+    }
+}
+
+// Método genérico
+public static <T> List<T> arrayParaLista(T[] array) {
+    return Arrays.asList(array);
+}
+`,
+    },
+    {
+      title: 'Java: Optional',
+      content: `
+import java.util.Optional;
+
+public class OptionalDemo {
+    public static void main(String[] args) {
+        // Criando Optional
+        Optional<String> presente = Optional.of("Valor");
+        Optional<String> vazio = Optional.empty();
+        Optional<String> nullable = Optional.ofNullable(null);
+        
+        // Verificando presença
+        if (presente.isPresent()) {
+            System.out.println(presente.get());
+        }
+        
+        // ifPresent com lambda
+        presente.ifPresent(v -> System.out.println(v));
+        
+        // ifPresentOrElse (Java 9+)
+        presente.ifPresentOrElse(
+            v -> System.out.println("Valor: " + v),
+            () -> System.out.println("Vazio")
+        );
+        
+        // Valor padrão
+        String valor = vazio.orElse("Padrão");
+        String valorLazy = vazio.orElseGet(() -> "Calculado");
+        
+        // Lançar exceção se vazio
+        // String obrigatorio = vazio.orElseThrow(() -> 
+        //     new IllegalStateException("Valor obrigatório"));
+        
+        // Map
+        Optional<Integer> tamanho = presente.map(String::length);
+        
+        // FlatMap (para evitar Optional<Optional<>>)
+        Optional<String> resultado = presente
+            .flatMap(v -> Optional.of(v.toUpperCase()));
+        
+        // Filter
+        Optional<String> filtrado = presente
+            .filter(v -> v.length() > 3);
+        
+        // or (Java 9+)
+        Optional<String> comFallback = vazio
+            .or(() -> Optional.of("Fallback"));
+        
+        // stream (Java 9+)
+        presente.stream().forEach(System.out::println);
+    }
+    
+    // Uso em métodos
+    public Optional<Usuario> buscarPorId(int id) {
+        Usuario usuario = // buscar no banco...
+        return Optional.ofNullable(usuario);
+    }
+}
+`,
+    },
+    {
+      title: 'Ruby: Metaprogramação',
+      content: `
+# method_missing - intercepta chamadas a métodos inexistentes
+class DynamicFinder
+  def method_missing(method_name, *args)
+    if method_name.to_s.start_with?('find_by_')
+      atributo = method_name.to_s.sub('find_by_', '')
+      puts "Buscando por #{atributo}: #{args.first}"
+    else
+      super
+    end
+  end
+  
+  def respond_to_missing?(method_name, include_private = false)
+    method_name.to_s.start_with?('find_by_') || super
+  end
+end
+
+finder = DynamicFinder.new
+finder.find_by_nome("João")
+
+# define_method - cria métodos dinamicamente
+class Pessoa
+  ATRIBUTOS = [:nome, :idade, :email]
+  
+  ATRIBUTOS.each do |attr|
+    define_method(attr) do
+      instance_variable_get("@#{attr}")
+    end
+    
+    define_method("#{attr}=") do |valor|
+      instance_variable_set("@#{attr}", valor)
+    end
+  end
+end
+
+# class_eval e instance_eval
+String.class_eval do
+  def gritar
+    self.upcase + "!"
+  end
+end
+
+"olá".gritar  # => "OLÁ!"
+
+# send - chama método pelo nome
+obj = "Hello"
+obj.send(:upcase)  # => "HELLO"
+obj.send(:[], 0)   # => "H"
+
+# Hooks
+class Base
+  def self.inherited(subclass)
+    puts "#{subclass} herdou de #{self}"
+  end
+  
+  def self.method_added(method_name)
+    puts "Método #{method_name} adicionado"
+  end
+end
+
+# Módulos e extend/include
+module Saudavel
+  def self.included(base)
+    base.extend(ClassMethods)
+  end
+  
+  module ClassMethods
+    def criar_saudacao(nome)
+      define_method(:saudar) { "Olá, #{nome}!" }
+    end
+  end
+end
+`,
+    },
+    {
+      title: 'Ruby: Blocks, Procs e Lambdas',
+      content: `
+# Block - código passado para método
+[1, 2, 3].each { |n| puts n }
+
+[1, 2, 3].each do |n|
+  puts n * 2
+end
+
+# Método que aceita block
+def executar_duas_vezes
+  yield
+  yield
+end
+
+executar_duas_vezes { puts "Olá!" }
+
+# Block com parâmetros
+def aplicar_a_lista(lista)
+  lista.map { |item| yield(item) }
+end
+
+resultado = aplicar_a_lista([1, 2, 3]) { |n| n * 2 }
+
+# Proc - block como objeto
+meu_proc = Proc.new { |n| n * 2 }
+dobrar = proc { |n| n * 2 }
+
+meu_proc.call(5)  # => 10
+meu_proc[5]       # => 10
+meu_proc.(5)      # => 10
+
+# Lambda
+meu_lambda = lambda { |n| n * 2 }
+outro_lambda = ->(n) { n * 2 }
+
+meu_lambda.call(5)  # => 10
+
+# Diferenças entre Proc e Lambda
+# 1. Lambda verifica argumentos, Proc não
+proc_flex = proc { |a, b| "a=#{a}, b=#{b}" }
+lambda_strict = ->(a, b) { "a=#{a}, b=#{b}" }
+
+proc_flex.call(1)           # => "a=1, b="
+# lambda_strict.call(1)     # ArgumentError
+
+# 2. Return em Proc sai do método, em Lambda só do lambda
+def teste_proc
+  meu_proc = Proc.new { return "do proc" }
+  meu_proc.call
+  "do método"  # Nunca executa
+end
+
+def teste_lambda
+  meu_lambda = -> { return "do lambda" }
+  meu_lambda.call
+  "do método"  # Executa normalmente
+end
+
+# Converter método em Proc
+def dobrar(n)
+  n * 2
+end
+
+[1, 2, 3].map(&method(:dobrar))
+
+# Symbol#to_proc
+["a", "b", "c"].map(&:upcase)  # => ["A", "B", "C"]
+`,
+    },
   ],
   "Frontend": [
     {
