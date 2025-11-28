@@ -2378,11 +2378,11 @@ ngOnDestroy() {
 }
 
 // BehaviorSubject para estado
-private estado$ = new BehaviorSubject<Estado>(estadoInicial);
-estado$$ = this.estado$.asObservable();
+private _estado$ = new BehaviorSubject<Estado>(estadoInicial);
+estado$ = this._estado$.asObservable();
 
 atualizarEstado(novoEstado: Estado) {
-  this.estado$.next(novoEstado);
+  this._estado$.next(novoEstado);
 }
 `
     },
