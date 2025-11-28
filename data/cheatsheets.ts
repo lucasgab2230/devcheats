@@ -4413,6 +4413,1385 @@ mutation CriarLivro {
 }
 `,
     },
+    {
+      title: 'Express.js: Configuração Básica e Rotas',
+      content: `
+// Instalação: npm install express
+
+const express = require('express');
+const app = express();
+
+// Middleware para parsear JSON
+app.use(express.json());
+
+// Rota GET simples
+app.get('/', (req, res) => {
+    res.send('Hello World!');
+});
+
+// Rota com parâmetros
+app.get('/users/:id', (req, res) => {
+    const userId = req.params.id;
+    res.json({ id: userId, name: 'João' });
+});
+
+// Rota POST
+app.post('/users', (req, res) => {
+    const { name, email } = req.body;
+    res.status(201).json({ message: 'User created', name, email });
+});
+
+// Rota PUT e DELETE
+app.put('/users/:id', (req, res) => res.json({ updated: true }));
+app.delete('/users/:id', (req, res) => res.status(204).send());
+
+// Iniciar servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log('Server running'));
+`,
+    },
+    {
+      title: 'Express.js: Middlewares',
+      content: `
+const express = require('express');
+const app = express();
+
+// Middleware de logging
+const logger = (req, res, next) => {
+    console.log(new Date().toISOString(), req.method, req.url);
+    next();
+};
+
+// Middleware de autenticação
+const authenticate = (req, res, next) => {
+    const token = req.headers.authorization;
+    if (!token) {
+        return res.status(401).json({ error: 'Token não fornecido' });
+    }
+    next();
+};
+
+// Middleware global
+app.use(logger);
+app.use(express.json());
+
+// Middleware específico para rotas
+app.get('/public', (req, res) => res.json({ message: 'Rota pública' }));
+app.get('/private', authenticate, (req, res) => res.json({ message: 'Rota privada' }));
+
+// Middleware de erro
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).json({ error: 'Algo deu errado!' });
+});
+
+// Middleware 404
+app.use((req, res) => res.status(404).json({ error: 'Rota não encontrada' }));
+`,
+    },
+    {
+      title: 'Express.js: Router e Organização',
+      content: `
+// routes/users.js
+const express = require('express');
+const router = express.Router();
+
+router.get('/', async (req, res) => {
+    const users = await User.findAll();
+    res.json(users);
+});
+
+router.get('/:id', async (req, res) => {
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ error: 'User not found' });
+    res.json(user);
+});
+
+router.post('/', async (req, res) => {
+    const user = await User.create(req.body);
+    res.status(201).json(user);
+});
+
+module.exports = router;
+
+// app.js
+const express = require('express');
+const usersRouter = require('./routes/users');
+const productsRouter = require('./routes/products');
+
+const app = express();
+app.use(express.json());
+app.use('/api/users', usersRouter);
+app.use('/api/products', productsRouter);
+
+module.exports = app;
+`,
+    },
+    {
+      title: 'Express.js: Validação com Express-Validator',
+      content: `
+// npm install express-validator
+const { body, validationResult, param } = require('express-validator');
+const express = require('express');
+const app = express();
+app.use(express.json());
+
+// Regras de validação
+const userValidation = [
+    body('email').isEmail().normalizeEmail().withMessage('Email inválido'),
+    body('password').isLength({ min: 6 }).withMessage('Senha curta'),
+    body('name').trim().notEmpty().withMessage('Nome obrigatório')
+];
+
+// Middleware para verificar erros
+const validate = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+    }
+    next();
+};
+
+// Rota com validação
+app.post('/users', userValidation, validate, (req, res) => {
+    res.status(201).json({ message: 'User created' });
+});
+
+// Validação de parâmetros
+app.get('/users/:id', 
+    param('id').isInt().withMessage('ID deve ser número'),
+    validate,
+    (req, res) => res.json({ id: req.params.id })
+);
+`,
+    },
+    {
+      title: 'Express.js: Upload de Arquivos',
+      content: `
+// npm install multer
+const express = require('express');
+const multer = require('multer');
+const path = require('path');
+
+const app = express();
+
+// Configuração do storage
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => cb(null, 'uploads/'),
+    filename: (req, file, cb) => {
+        const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, uniqueName + path.extname(file.originalname));
+    }
+});
+
+// Filtro de arquivos
+const fileFilter = (req, file, cb) => {
+    const allowed = ['image/jpeg', 'image/png', 'image/gif'];
+    cb(null, allowed.includes(file.mimetype));
+};
+
+const upload = multer({ 
+    storage,
+    fileFilter,
+    limits: { fileSize: 5 * 1024 * 1024 } // 5MB
+});
+
+// Upload único
+app.post('/upload', upload.single('image'), (req, res) => {
+    res.json({ message: 'Upload realizado', filename: req.file.filename });
+});
+
+// Upload múltiplo
+app.post('/uploads', upload.array('images', 5), (req, res) => {
+    res.json({ files: req.files.map(f => f.filename) });
+});
+`,
+    },
+    {
+      title: 'FastAPI: Introdução e Rotas',
+      content: `
+# pip install fastapi uvicorn
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import Optional, List
+
+app = FastAPI(title="Minha API", version="1.0.0")
+
+class User(BaseModel):
+    name: str
+    email: str
+    age: Optional[int] = None
+
+class UserResponse(User):
+    id: int
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World"}
+
+@app.get("/users/{user_id}", response_model=UserResponse)
+async def get_user(user_id: int):
+    return {"id": user_id, "name": "João", "email": "joao@email.com"}
+
+@app.get("/users/", response_model=List[UserResponse])
+async def list_users(skip: int = 0, limit: int = 10):
+    return []
+
+@app.post("/users/", response_model=UserResponse, status_code=201)
+async def create_user(user: User):
+    return {"id": 1, **user.dict()}
+
+# Executar: uvicorn main:app --reload
+`,
+    },
+    {
+      title: 'FastAPI: Dependências e Autenticação',
+      content: `
+from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from pydantic import BaseModel
+from typing import Optional
+
+app = FastAPI()
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+class User(BaseModel):
+    username: str
+    email: Optional[str] = None
+    disabled: Optional[bool] = None
+
+async def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = decode_token(token)  # Implementar
+    if user is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return user
+
+async def get_current_active_user(user: User = Depends(get_current_user)):
+    if user.disabled:
+        raise HTTPException(status_code=400, detail="Usuário inativo")
+    return user
+
+@app.post("/token")
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    access_token = create_access_token(data={"sub": form_data.username})
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/users/me", response_model=User)
+async def read_users_me(current_user: User = Depends(get_current_active_user)):
+    return current_user
+`,
+    },
+    {
+      title: 'FastAPI: Background Tasks e WebSockets',
+      content: `
+from fastapi import FastAPI, BackgroundTasks, WebSocket, WebSocketDisconnect
+from typing import List
+
+app = FastAPI()
+
+def send_email(email: str, message: str):
+    import time
+    time.sleep(5)
+    print(f"Email enviado para {email}: {message}")
+
+@app.post("/send-notification/")
+async def send_notification(email: str, background_tasks: BackgroundTasks):
+    background_tasks.add_task(send_email, email, "Bem-vindo!")
+    return {"message": "Notificação será enviada em background"}
+
+class ConnectionManager:
+    def __init__(self):
+        self.active_connections: List[WebSocket] = []
+
+    async def connect(self, websocket: WebSocket):
+        await websocket.accept()
+        self.active_connections.append(websocket)
+
+    def disconnect(self, websocket: WebSocket):
+        self.active_connections.remove(websocket)
+
+    async def broadcast(self, message: str):
+        for conn in self.active_connections:
+            await conn.send_text(message)
+
+manager = ConnectionManager()
+
+@app.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: str):
+    await manager.connect(websocket)
+    try:
+        while True:
+            data = await websocket.receive_text()
+            await manager.broadcast(f"Cliente {client_id}: {data}")
+    except WebSocketDisconnect:
+        manager.disconnect(websocket)
+`,
+    },
+    {
+      title: 'Django REST Framework: Serializers',
+      content: `
+# serializers.py
+from rest_framework import serializers
+from .models import User, Post
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'date_joined']
+        read_only_fields = ['date_joined']
+
+class PostSerializer(serializers.ModelSerializer):
+    author = UserSerializer(read_only=True)
+    
+    class Meta:
+        model = Post
+        fields = ['id', 'title', 'content', 'author', 'created_at']
+    
+    def validate_title(self, value):
+        if len(value) < 5:
+            raise serializers.ValidationError("Título muito curto")
+        return value
+
+class PostCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['title', 'content']
+    
+    def create(self, validated_data):
+        validated_data['author'] = self.context['request'].user
+        return super().create(validated_data)
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    posts_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'posts_count']
+    
+    def get_posts_count(self, obj):
+        return obj.posts.count()
+`,
+    },
+    {
+      title: 'Django REST Framework: ViewSets e Routers',
+      content: `
+# views.py
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from .models import User, Post
+from .serializers import UserSerializer, PostSerializer
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    
+    @action(detail=True, methods=['get'])
+    def posts(self, request, pk=None):
+        user = self.get_object()
+        posts = user.posts.all()
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        author = self.request.query_params.get('author')
+        if author:
+            queryset = queryset.filter(author__username=author)
+        return queryset
+
+# urls.py
+from rest_framework.routers import DefaultRouter
+router = DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'posts', PostViewSet)
+urlpatterns = router.urls
+`,
+    },
+    {
+      title: 'Django REST Framework: Filtros e Paginação',
+      content: `
+# settings.py
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    'DEFAULT_FILTER_BACKENDS': [
+        'django_filters.rest_framework.DjangoFilterBackend',
+        'rest_framework.filters.SearchFilter',
+        'rest_framework.filters.OrderingFilter',
+    ],
+}
+
+# filters.py
+import django_filters
+from .models import Post
+
+class PostFilter(django_filters.FilterSet):
+    title = django_filters.CharFilter(lookup_expr='icontains')
+    created_after = django_filters.DateTimeFilter(field_name='created_at', lookup_expr='gte')
+    created_before = django_filters.DateTimeFilter(field_name='created_at', lookup_expr='lte')
+    
+    class Meta:
+        model = Post
+        fields = ['author', 'title', 'created_after', 'created_before']
+
+# views.py
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    filterset_class = PostFilter
+    search_fields = ['title', 'content']
+    ordering_fields = ['created_at', 'title']
+    ordering = ['-created_at']
+
+# Uso: GET /posts/?author=1&title=django&ordering=-created_at
+`,
+    },
+    {
+      title: 'Flask: SQLAlchemy ORM',
+      content: `
+# pip install flask-sqlalchemy
+from flask import Flask, request
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+db = SQLAlchemy(app)
+
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    posts = db.relationship('Post', backref='author', lazy=True)
+    
+    def to_dict(self):
+        return {'id': self.id, 'username': self.username, 'email': self.email}
+
+class Post(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(200), nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+
+with app.app_context():
+    db.create_all()
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return {'users': [u.to_dict() for u in users]}
+
+@app.route('/users', methods=['POST'])
+def create_user():
+    data = request.json
+    user = User(username=data['username'], email=data['email'])
+    db.session.add(user)
+    db.session.commit()
+    return user.to_dict(), 201
+`,
+    },
+    {
+      title: 'Flask: Blueprints e Estrutura',
+      content: `
+# Estrutura: app/__init__.py, app/routes/users.py
+
+# app/__init__.py
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+def create_app(config_name='development'):
+    app = Flask(__name__)
+    app.config.from_object(config[config_name])
+    db.init_app(app)
+    
+    from app.routes.users import users_bp
+    from app.routes.posts import posts_bp
+    
+    app.register_blueprint(users_bp, url_prefix='/api/users')
+    app.register_blueprint(posts_bp, url_prefix='/api/posts')
+    
+    return app
+
+# app/routes/users.py
+from flask import Blueprint, request, jsonify
+from app.models import User
+from app import db
+
+users_bp = Blueprint('users', __name__)
+
+@users_bp.route('/', methods=['GET'])
+def list_users():
+    users = User.query.all()
+    return jsonify([u.to_dict() for u in users])
+
+@users_bp.route('/<int:id>', methods=['GET'])
+def get_user(id):
+    user = User.query.get_or_404(id)
+    return jsonify(user.to_dict())
+
+@users_bp.route('/', methods=['POST'])
+def create_user():
+    data = request.json
+    user = User(**data)
+    db.session.add(user)
+    db.session.commit()
+    return jsonify(user.to_dict()), 201
+`,
+    },
+    {
+      title: 'ASP.NET Core: Web API Básica',
+      content: `
+// Program.cs (.NET 6+)
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();
+
+// Controllers/UsersController.cs
+using Microsoft.AspNetCore.Mvc;
+
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    private static List<User> _users = new();
+
+    [HttpGet]
+    public ActionResult<IEnumerable<User>> GetAll() => Ok(_users);
+
+    [HttpGet("{id}")]
+    public ActionResult<User> GetById(int id)
+    {
+        var user = _users.FirstOrDefault(u => u.Id == id);
+        if (user == null) return NotFound();
+        return Ok(user);
+    }
+
+    [HttpPost]
+    public ActionResult<User> Create(User user)
+    {
+        user.Id = _users.Count + 1;
+        _users.Add(user);
+        return CreatedAtAction(nameof(GetById), new { id = user.Id }, user);
+    }
+}
+`,
+    },
+    {
+      title: 'ASP.NET Core: Entity Framework',
+      content: `
+// Models/User.cs
+public class User
+{
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public ICollection<Post> Posts { get; set; } = new List<Post>();
+}
+
+// Data/AppDbContext.cs
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Post> Posts => Set<Post>();
+    
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.Posts)
+            .WithOne(p => p.Author)
+            .HasForeignKey(p => p.AuthorId);
+    }
+}
+
+// Program.cs
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
+
+// Controller com EF
+[ApiController]
+[Route("api/[controller]")]
+public class UsersController : ControllerBase
+{
+    private readonly AppDbContext _context;
+    public UsersController(AppDbContext context) => _context = context;
+
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<User>>> GetAll()
+        => await _context.Users.Include(u => u.Posts).ToListAsync();
+}
+`,
+    },
+    {
+      title: 'ASP.NET Core: Autenticação JWT',
+      content: `
+// Program.cs
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]!))
+        };
+    });
+
+// Services/TokenService.cs
+public class TokenService
+{
+    private readonly IConfiguration _config;
+    public TokenService(IConfiguration config) => _config = config;
+    
+    public string GenerateToken(User user)
+    {
+        var claims = new[]
+        {
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Email, user.Email),
+            new Claim(ClaimTypes.Role, user.Role)
+        };
+        
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+        var token = new JwtSecurityToken(
+            issuer: _config["Jwt:Issuer"],
+            audience: _config["Jwt:Audience"],
+            claims: claims,
+            expires: DateTime.Now.AddHours(2),
+            signingCredentials: creds);
+        
+        return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+}
+`,
+    },
+    {
+      title: 'Go Gin: API REST Básica',
+      content: `
+// go get -u github.com/gin-gonic/gin
+
+package main
+
+import (
+    "net/http"
+    "github.com/gin-gonic/gin"
+)
+
+type User struct {
+    ID    string
+    Name  string
+    Email string
+}
+
+var users = []User{}
+
+func main() {
+    r := gin.Default()
+    
+    api := r.Group("/api")
+    {
+        api.GET("/users", getUsers)
+        api.GET("/users/:id", getUserById)
+        api.POST("/users", createUser)
+    }
+    
+    r.Run(":8080")
+}
+
+func getUsers(c *gin.Context) {
+    c.JSON(http.StatusOK, users)
+}
+
+func getUserById(c *gin.Context) {
+    id := c.Param("id")
+    for _, user := range users {
+        if user.ID == id {
+            c.JSON(http.StatusOK, user)
+            return
+        }
+    }
+    c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+}
+
+func createUser(c *gin.Context) {
+    var user User
+    if err := c.ShouldBindJSON(&user); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+        return
+    }
+    users = append(users, user)
+    c.JSON(http.StatusCreated, user)
+}
+`,
+    },
+    {
+      title: 'Go Gin: Middlewares',
+      content: `
+package main
+
+import (
+    "log"
+    "net/http"
+    "time"
+    "github.com/gin-gonic/gin"
+)
+
+func Logger() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        start := time.Now()
+        path := c.Request.URL.Path
+        c.Next()
+        latency := time.Since(start)
+        status := c.Writer.Status()
+        log.Printf("[%d] %s %s - %v", status, c.Request.Method, path, latency)
+    }
+}
+
+func AuthRequired() gin.HandlerFunc {
+    return func(c *gin.Context) {
+        token := c.GetHeader("Authorization")
+        if token == "" {
+            c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido"})
+            return
+        }
+        c.Next()
+    }
+}
+
+func main() {
+    r := gin.New()
+    r.Use(Logger())
+    r.Use(gin.Recovery())
+    
+    public := r.Group("/api")
+    {
+        public.GET("/health", func(c *gin.Context) {
+            c.JSON(http.StatusOK, gin.H{"status": "ok"})
+        })
+    }
+    
+    private := r.Group("/api/admin")
+    private.Use(AuthRequired())
+    {
+        private.GET("/users", getUsers)
+    }
+    
+    r.Run(":8080")
+}
+`,
+    },
+    {
+      title: 'Go Gin: GORM e Banco de Dados',
+      content: `
+// go get -u gorm.io/gorm gorm.io/driver/postgres
+
+package main
+
+import (
+    "net/http"
+    "github.com/gin-gonic/gin"
+    "gorm.io/gorm"
+    "gorm.io/driver/postgres"
+)
+
+type User struct {
+    gorm.Model
+    Name  string
+    Email string
+    Posts []Post
+}
+
+type Post struct {
+    gorm.Model
+    Title   string
+    Content string
+    UserID  uint
+}
+
+var db *gorm.DB
+
+func initDB() {
+    dsn := "host=localhost user=postgres password=secret dbname=app port=5432"
+    var err error
+    db, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
+    if err != nil {
+        panic("Falha ao conectar ao banco")
+    }
+    db.AutoMigrate(&User{}, &Post{})
+}
+
+func main() {
+    initDB()
+    r := gin.Default()
+    
+    r.GET("/users", func(c *gin.Context) {
+        var users []User
+        db.Preload("Posts").Find(&users)
+        c.JSON(http.StatusOK, users)
+    })
+    
+    r.POST("/users", func(c *gin.Context) {
+        var user User
+        if err := c.ShouldBindJSON(&user); err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+            return
+        }
+        db.Create(&user)
+        c.JSON(http.StatusCreated, user)
+    })
+    
+    r.Run(":8080")
+}
+`,
+    },
+    {
+      title: 'NestJS: Controllers e Services',
+      content: `
+// npm install @nestjs/core @nestjs/common
+
+// users.controller.ts
+import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { UsersService } from './users.service';
+import { CreateUserDto, UpdateUserDto } from './dto';
+
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Get()
+  findAll() { return this.usersService.findAll(); }
+
+  @Get(':id')
+  findOne(@Param('id') id: string) { return this.usersService.findOne(+id); }
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(+id, updateUserDto);
+  }
+
+  @Delete(':id')
+  remove(@Param('id') id: string) { return this.usersService.remove(+id); }
+}
+
+// users.service.ts
+import { Injectable, NotFoundException } from '@nestjs/common';
+
+@Injectable()
+export class UsersService {
+  private users = [];
+
+  findAll() { return this.users; }
+  findOne(id: number) {
+    const user = this.users.find(u => u.id === id);
+    if (!user) throw new NotFoundException('User not found');
+    return user;
+  }
+  create(dto: CreateUserDto) {
+    const user = { id: Date.now(), ...dto };
+    this.users.push(user);
+    return user;
+  }
+}
+`,
+    },
+    {
+      title: 'NestJS: Módulos e TypeORM',
+      content: `
+// users.module.ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
+import { User } from './entities/user.entity';
+
+@Module({
+  imports: [TypeOrmModule.forFeature([User])],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService],
+})
+export class UsersModule {}
+
+// app.module.ts
+import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+
+@Module({
+  imports: [
+    TypeOrmModule.forRoot({
+      type: 'postgres',
+      host: 'localhost',
+      port: 5432,
+      username: 'postgres',
+      password: 'secret',
+      database: 'app',
+      autoLoadEntities: true,
+      synchronize: true,
+    }),
+    UsersModule,
+  ],
+})
+export class AppModule {}
+
+// entities/user.entity.ts
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column()
+  name: string;
+
+  @Column({ unique: true })
+  email: string;
+
+  @OneToMany(() => Post, post => post.author)
+  posts: Post[];
+}
+`,
+    },
+    {
+      title: 'NestJS: Guards e Interceptors',
+      content: `
+// guards/jwt-auth.guard.ts
+import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
+  constructor(private jwtService: JwtService) {}
+
+  canActivate(context: ExecutionContext): boolean {
+    const request = context.switchToHttp().getRequest();
+    const token = request.headers.authorization?.split(' ')[1];
+    
+    if (!token) return false;
+    
+    try {
+      const payload = this.jwtService.verify(token);
+      request.user = payload;
+      return true;
+    } catch { return false; }
+  }
+}
+
+// dto/create-user.dto.ts
+import { IsString, IsEmail, MinLength } from 'class-validator';
+
+export class CreateUserDto {
+  @IsString() @MinLength(2)
+  name: string;
+
+  @IsEmail()
+  email: string;
+}
+
+// interceptors/transform.interceptor.ts
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
+import { map, Observable } from 'rxjs';
+
+@Injectable()
+export class TransformInterceptor implements NestInterceptor {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+    return next.handle().pipe(
+      map(data => ({ success: true, data, timestamp: new Date().toISOString() })),
+    );
+  }
+}
+`,
+    },
+    {
+      title: 'JWT: Autenticação com Node.js',
+      content: `
+// npm install jsonwebtoken bcryptjs
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'sua-chave-secreta';
+const JWT_EXPIRES_IN = '2h';
+
+function generateToken(user) {
+    return jwt.sign(
+        { id: user.id, email: user.email, role: user.role },
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
+    );
+}
+
+function verifyToken(token) {
+    try {
+        return jwt.verify(token, JWT_SECRET);
+    } catch (error) {
+        return null;
+    }
+}
+
+function authMiddleware(req, res, next) {
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+        return res.status(401).json({ error: 'Token não fornecido' });
+    }
+    
+    const token = authHeader.split(' ')[1];
+    const decoded = verifyToken(token);
+    
+    if (!decoded) {
+        return res.status(401).json({ error: 'Token inválido' });
+    }
+    
+    req.user = decoded;
+    next();
+}
+
+app.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    
+    if (!user || !bcrypt.compareSync(password, user.password)) {
+        return res.status(401).json({ error: 'Credenciais inválidas' });
+    }
+    
+    const token = generateToken(user);
+    res.json({ token, user: { id: user.id, email: user.email } });
+});
+`,
+    },
+    {
+      title: 'OAuth 2.0: Fluxo de Autenticação',
+      content: `
+// npm install passport passport-google-oauth20
+const passport = require('passport');
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "/auth/google/callback"
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    let user = await User.findOne({ googleId: profile.id });
+    
+    if (!user) {
+      user = await User.create({
+        googleId: profile.id,
+        email: profile.emails[0].value,
+        name: profile.displayName,
+        avatar: profile.photos[0].value
+      });
+    }
+    
+    return done(null, user);
+  }
+));
+
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser(async (id, done) => {
+    const user = await User.findById(id);
+    done(null, user);
+});
+
+app.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+app.get('/auth/google/callback',
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  (req, res) => {
+    const token = generateToken(req.user);
+    res.redirect('/auth/success?token=' + token);
+  }
+);
+`,
+    },
+    {
+      title: 'Rate Limiting e Segurança',
+      content: `
+// npm install express-rate-limit helmet cors
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const cors = require('cors');
+
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutos
+    max: 100,
+    message: { error: 'Muitas requisições, tente novamente mais tarde' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const loginLimiter = rateLimit({
+    windowMs: 60 * 60 * 1000, // 1 hora
+    max: 5,
+    message: { error: 'Muitas tentativas de login' }
+});
+
+const app = express();
+
+app.use(helmet());
+
+app.use(cors({
+    origin: ['https://meusite.com'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
+
+app.use(limiter);
+app.use('/api/login', loginLimiter);
+
+const sanitize = (req, res, next) => {
+    for (let key in req.body) {
+        if (typeof req.body[key] === 'string') {
+            req.body[key] = req.body[key].replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+    }
+    next();
+};
+
+app.use(sanitize);
+`,
+    },
+    {
+      title: 'REST API: Boas Práticas',
+      content: `
+// Estrutura de resposta padronizada
+const successResponse = (res, data, message = 'Sucesso', statusCode = 200) => {
+    return res.status(statusCode).json({
+        success: true, message, data, timestamp: new Date().toISOString()
+    });
+};
+
+const errorResponse = (res, message, statusCode = 400, errors = null) => {
+    return res.status(statusCode).json({
+        success: false, message, errors, timestamp: new Date().toISOString()
+    });
+};
+
+// Versionamento de API
+app.use('/api/v1/users', usersV1Router);
+app.use('/api/v2/users', usersV2Router);
+
+// Paginação
+const paginate = async (model, page = 1, limit = 10, filter = {}) => {
+    const skip = (page - 1) * limit;
+    const [data, total] = await Promise.all([
+        model.find(filter).skip(skip).limit(limit),
+        model.countDocuments(filter)
+    ]);
+    
+    return {
+        data,
+        pagination: {
+            page, limit, total,
+            pages: Math.ceil(total / limit),
+            hasNext: page * limit < total,
+            hasPrev: page > 1
+        }
+    };
+};
+
+app.get('/api/users', async (req, res) => {
+    const { page = 1, limit = 10, sort = '-createdAt', name } = req.query;
+    const filter = {};
+    if (name) filter.name = new RegExp(name, 'i');
+    const result = await paginate(User, +page, +limit, filter);
+    successResponse(res, result);
+});
+`,
+    },
+    {
+      title: 'Prisma ORM: Configuração e Queries',
+      content: `
+// npm install prisma @prisma/client
+// npx prisma init
+
+// schema.prisma
+generator client { provider = "prisma-client-js" }
+datasource db { provider = "postgresql"; url = env("DATABASE_URL") }
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  posts     Post[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String?
+  published Boolean  @default(false)
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
+}
+
+// Uso
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
+
+// Criar usuário com posts
+const user = await prisma.user.create({
+  data: {
+    email: 'joao@email.com',
+    name: 'João',
+    posts: { create: [{ title: 'Post 1', content: '...' }] }
+  },
+  include: { posts: true }
+});
+
+// Buscar com filtros
+const users = await prisma.user.findMany({
+  where: { email: { contains: '@gmail.com' } },
+  include: { posts: { where: { published: true } } },
+  orderBy: { createdAt: 'desc' },
+  skip: 0, take: 10
+});
+`,
+    },
+    {
+      title: 'MongoDB com Mongoose',
+      content: `
+// npm install mongoose
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URI);
+
+const userSchema = new mongoose.Schema({
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    password: { type: String, required: true, minlength: 6 },
+    role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }]
+}, { timestamps: true });
+
+userSchema.pre('save', async function(next) {
+    if (this.isModified('password')) {
+        this.password = await bcrypt.hash(this.password, 10);
+    }
+    next();
+});
+
+userSchema.methods.comparePassword = async function(password) {
+    return bcrypt.compare(password, this.password);
+};
+
+userSchema.statics.findByEmail = function(email) {
+    return this.findOne({ email });
+};
+
+const User = mongoose.model('User', userSchema);
+
+const users = await User.find({ role: 'user' })
+    .select('name email')
+    .populate('posts', 'title')
+    .sort('-createdAt')
+    .limit(10);
+`,
+    },
+    {
+      title: 'Redis: Cache e Sessões',
+      content: `
+// npm install ioredis
+const Redis = require('ioredis');
+const redis = new Redis({
+    host: process.env.REDIS_HOST || 'localhost',
+    port: process.env.REDIS_PORT || 6379,
+    password: process.env.REDIS_PASSWORD
+});
+
+const cache = {
+    async get(key) {
+        const data = await redis.get(key);
+        return data ? JSON.parse(data) : null;
+    },
+    async set(key, value, ttlSeconds = 3600) {
+        await redis.setex(key, ttlSeconds, JSON.stringify(value));
+    },
+    async del(key) {
+        await redis.del(key);
+    },
+    async invalidatePattern(pattern) {
+        const keys = await redis.keys(pattern);
+        if (keys.length > 0) await redis.del(...keys);
+    }
+};
+
+const cacheMiddleware = (ttl = 300) => async (req, res, next) => {
+    const key = 'cache:' + req.originalUrl;
+    
+    const cached = await cache.get(key);
+    if (cached) return res.json(cached);
+    
+    const originalJson = res.json.bind(res);
+    res.json = async (data) => {
+        await cache.set(key, data, ttl);
+        return originalJson(data);
+    };
+    
+    next();
+};
+
+app.get('/api/products', cacheMiddleware(600), async (req, res) => {
+    const products = await Product.find();
+    res.json(products);
+});
+`,
+    },
   ],
   "DevOps": [
     {
