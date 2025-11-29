@@ -5994,6 +5994,1583 @@ jobs:
         env:
           GITHUB_TOKEN: \${{ secrets.GITHUB_TOKEN }}
 `
+    },
+    {
+      title: 'Docker: Comandos Essenciais',
+      content: `
+# Listar imagens locais
+docker images
+
+# Listar containers em execução
+docker ps
+
+# Listar todos os containers (incluindo parados)
+docker ps -a
+
+# Baixar uma imagem do Docker Hub
+docker pull nginx:latest
+
+# Executar um container
+docker run -d -p 8080:80 --name meu-nginx nginx
+
+# Parar um container
+docker stop meu-nginx
+
+# Remover um container
+docker rm meu-nginx
+
+# Remover uma imagem
+docker rmi nginx:latest
+
+# Ver logs de um container
+docker logs -f meu-nginx
+
+# Executar comando dentro de um container
+docker exec -it meu-nginx bash
+
+# Limpar recursos não utilizados
+docker system prune -a
+`,
+    },
+    {
+      title: 'Docker: Dockerfile',
+      content: `
+# Dockerfile para uma aplicação Node.js
+FROM node:18-alpine
+
+# Criar diretório da aplicação
+WORKDIR /app
+
+# Copiar arquivos de dependências
+COPY package*.json ./
+
+# Instalar dependências
+RUN npm ci --only=production
+
+# Copiar código fonte
+COPY . .
+
+# Expor porta
+EXPOSE 3000
+
+# Usuário não-root para segurança
+USER node
+
+# Comando de inicialização
+CMD ["node", "server.js"]
+
+# Multi-stage build para otimização
+# FROM node:18-alpine AS builder
+# WORKDIR /app
+# COPY . .
+# RUN npm ci && npm run build
+#
+# FROM node:18-alpine
+# WORKDIR /app
+# COPY --from=builder /app/dist ./dist
+# CMD ["node", "dist/server.js"]
+`,
+    },
+    {
+      title: 'Docker Compose: Configuração Básica',
+      content: `
+# docker-compose.yml
+version: '3.8'
+
+services:
+  # Aplicação web
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgres://user:pass@db:5432/mydb
+    depends_on:
+      - db
+      - redis
+    restart: unless-stopped
+
+  # Banco de dados PostgreSQL
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # Cache Redis
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+volumes:
+  postgres_data:
+
+# Comandos:
+# docker-compose up -d        # Iniciar serviços
+# docker-compose down         # Parar serviços
+# docker-compose logs -f app  # Ver logs
+`,
+    },
+    {
+      title: 'Kubernetes: Conceitos Básicos',
+      content: `
+# Pod - Menor unidade deployável
+apiVersion: v1
+kind: Pod
+metadata:
+  name: meu-pod
+  labels:
+    app: minha-app
+spec:
+  containers:
+  - name: app
+    image: nginx:latest
+    ports:
+    - containerPort: 80
+
+# Comandos kubectl essenciais:
+# kubectl get pods              # Listar pods
+# kubectl get services          # Listar serviços
+# kubectl get deployments       # Listar deployments
+# kubectl describe pod <nome>   # Detalhes do pod
+# kubectl logs <pod>            # Ver logs
+# kubectl exec -it <pod> -- sh  # Executar shell no pod
+# kubectl apply -f arquivo.yaml # Aplicar configuração
+# kubectl delete -f arquivo.yaml # Deletar recursos
+# kubectl get nodes             # Listar nodes do cluster
+# kubectl get namespaces        # Listar namespaces
+`,
+    },
+    {
+      title: 'Kubernetes: Deployment e Service',
+      content: `
+# Deployment - Gerencia réplicas e atualizações
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minha-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: minha-app
+  template:
+    metadata:
+      labels:
+        app: minha-app
+    spec:
+      containers:
+      - name: app
+        image: minha-app:v1.0
+        ports:
+        - containerPort: 8080
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "250m"
+          limits:
+            memory: "256Mi"
+            cpu: "500m"
+
+---
+# Service - Expõe o Deployment
+apiVersion: v1
+kind: Service
+metadata:
+  name: minha-app-service
+spec:
+  selector:
+    app: minha-app
+  ports:
+  - port: 80
+    targetPort: 8080
+  type: LoadBalancer
+`,
+    },
+    {
+      title: 'Kubernetes: ConfigMap e Secret',
+      content: `
+# ConfigMap - Configurações não sensíveis
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  APP_ENV: "production"
+  LOG_LEVEL: "info"
+  API_URL: "https://api.exemplo.com"
+
+---
+# Secret - Dados sensíveis (base64)
+apiVersion: v1
+kind: Secret
+metadata:
+  name: app-secrets
+type: Opaque
+data:
+  DB_PASSWORD: cGFzc3dvcmQxMjM=  # echo -n 'password123' | base64
+  API_KEY: bWluaGEtY2hhdmUtc2VjcmV0YQ==
+
+---
+# Usando no Deployment
+spec:
+  containers:
+  - name: app
+    image: minha-app:v1
+    envFrom:
+    - configMapRef:
+        name: app-config
+    - secretRef:
+        name: app-secrets
+    # Ou variáveis específicas:
+    env:
+    - name: DATABASE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: app-secrets
+          key: DB_PASSWORD
+`,
+    },
+    {
+      title: 'Kubernetes: Ingress',
+      content: `
+# Ingress - Roteamento HTTP/HTTPS externo
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: minha-app-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  ingressClassName: nginx
+  tls:
+  - hosts:
+    - meusite.com
+    secretName: meusite-tls
+  rules:
+  - host: meusite.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 8080
+
+# Comandos úteis:
+# kubectl get ingress
+# kubectl describe ingress minha-app-ingress
+`,
+    },
+    {
+      title: 'Kubernetes: HPA e PersistentVolume',
+      content: `
+# HorizontalPodAutoscaler - Escalonamento automático
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: minha-app-hpa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: minha-app
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 70
+
+---
+# PersistentVolumeClaim - Armazenamento persistente
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: minha-app-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi
+  storageClassName: standard
+
+# Usando no Pod:
+# volumes:
+# - name: data
+#   persistentVolumeClaim:
+#     claimName: minha-app-pvc
+`,
+    },
+    {
+      title: 'Terraform: Fundamentos',
+      content: `
+# main.tf - Configuração principal
+
+# Provedor (AWS como exemplo)
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 5.0"
+    }
+  }
+}
+
+provider "aws" {
+  region = var.aws_region
+}
+
+# Variáveis
+variable "aws_region" {
+  default = "us-east-1"
+}
+
+variable "instance_type" {
+  default = "t3.micro"
+}
+
+# Recurso EC2
+resource "aws_instance" "web" {
+  ami           = "ami-0c55b159cbfafe1f0"
+  instance_type = var.instance_type
+
+  tags = {
+    Name = "WebServer"
+    Environment = "production"
+  }
+}
+
+# Output
+output "instance_ip" {
+  value = aws_instance.web.public_ip
+}
+
+# Comandos:
+# terraform init    # Inicializar
+# terraform plan    # Ver mudanças
+# terraform apply   # Aplicar
+# terraform destroy # Destruir recursos
+`,
+    },
+    {
+      title: 'Terraform: Módulos e Backend',
+      content: `
+# Backend remoto (S3)
+terraform {
+  backend "s3" {
+    bucket         = "meu-terraform-state"
+    key            = "prod/terraform.tfstate"
+    region         = "us-east-1"
+    encrypt        = true
+    dynamodb_table = "terraform-locks"
+  }
+}
+
+# Usando módulos
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "5.0.0"
+
+  name = "minha-vpc"
+  cidr = "10.0.0.0/16"
+
+  azs             = ["us-east-1a", "us-east-1b"]
+  private_subnets = ["10.0.1.0/24", "10.0.2.0/24"]
+  public_subnets  = ["10.0.101.0/24", "10.0.102.0/24"]
+
+  enable_nat_gateway = true
+
+  tags = {
+    Environment = "production"
+  }
+}
+
+# Criando seu próprio módulo (modules/ec2/main.tf)
+# resource "aws_instance" "this" {
+#   ami           = var.ami
+#   instance_type = var.instance_type
+#   subnet_id     = var.subnet_id
+# }
+#
+# Usando:
+# module "webserver" {
+#   source        = "./modules/ec2"
+#   ami           = "ami-123456"
+#   instance_type = "t3.small"
+#   subnet_id     = module.vpc.public_subnets[0]
+# }
+`,
+    },
+    {
+      title: 'Ansible: Playbook Básico',
+      content: `
+# playbook.yml
+---
+- name: Configurar servidor web
+  hosts: webservers
+  become: yes  # Executar como root
+
+  vars:
+    http_port: 80
+    app_name: minha-app
+
+  tasks:
+    - name: Atualizar pacotes
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Instalar Nginx
+      apt:
+        name: nginx
+        state: present
+
+    - name: Copiar configuração do Nginx
+      template:
+        src: nginx.conf.j2
+        dest: /etc/nginx/sites-available/default
+      notify: Reiniciar Nginx
+
+    - name: Iniciar e habilitar Nginx
+      service:
+        name: nginx
+        state: started
+        enabled: yes
+
+  handlers:
+    - name: Reiniciar Nginx
+      service:
+        name: nginx
+        state: restarted
+
+# Inventário (inventory.ini)
+# [webservers]
+# server1 ansible_host=192.168.1.10
+# server2 ansible_host=192.168.1.11
+#
+# Executar: ansible-playbook -i inventory.ini playbook.yml
+`,
+    },
+    {
+      title: 'Ansible: Roles e Variáveis',
+      content: `
+# Estrutura de Role
+# roles/
+#   webserver/
+#     tasks/main.yml
+#     handlers/main.yml
+#     templates/
+#     files/
+#     vars/main.yml
+#     defaults/main.yml
+
+# roles/webserver/tasks/main.yml
+---
+- name: Instalar dependências
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - nginx
+    - python3
+    - certbot
+
+- name: Configurar virtual host
+  template:
+    src: vhost.conf.j2
+    dest: "/etc/nginx/sites-available/{{ domain }}"
+  notify: Reload Nginx
+
+# roles/webserver/defaults/main.yml
+---
+domain: exemplo.com
+document_root: /var/www/html
+
+# Usando role no playbook
+# - hosts: webservers
+#   roles:
+#     - role: webserver
+#       vars:
+#         domain: meusite.com
+
+# group_vars/webservers.yml
+---
+nginx_worker_processes: auto
+nginx_worker_connections: 1024
+
+# Comandos úteis:
+# ansible-galaxy init minha-role  # Criar estrutura de role
+# ansible-vault encrypt vars.yml  # Criptografar variáveis
+`,
+    },
+    {
+      title: 'Linux: Comandos de Arquivos e Diretórios',
+      content: `
+# Navegação
+pwd                   # Diretório atual
+cd /path/to/dir       # Mudar diretório
+cd ..                 # Diretório pai
+cd ~                  # Home do usuário
+
+# Listar arquivos
+ls                    # Listar
+ls -la                # Listar detalhado com ocultos
+ls -lh                # Tamanho legível (KB, MB)
+
+# Criar e remover
+mkdir -p dir1/dir2    # Criar diretórios recursivamente
+touch arquivo.txt     # Criar arquivo vazio
+rm arquivo.txt        # Remover arquivo
+rm -rf diretorio      # Remover diretório e conteúdo
+
+# Copiar e mover
+cp origem destino     # Copiar arquivo
+cp -r dir1 dir2       # Copiar diretório
+mv origem destino     # Mover/renomear
+
+# Visualizar conteúdo
+cat arquivo.txt       # Mostrar conteúdo
+less arquivo.txt      # Paginado (q para sair)
+head -n 20 arquivo    # Primeiras 20 linhas
+tail -f arquivo.log   # Últimas linhas em tempo real
+
+# Buscar arquivos
+find /path -name "*.log"              # Por nome
+find /path -type f -size +100M        # Arquivos > 100MB
+find /path -mtime -7                  # Modificados nos últimos 7 dias
+`,
+    },
+    {
+      title: 'Linux: Permissões e Usuários',
+      content: `
+# Permissões (rwx = read, write, execute)
+# Formato: [tipo][dono][grupo][outros]
+# Exemplo: -rwxr-xr-- = arquivo, dono:rwx, grupo:rx, outros:r
+
+chmod 755 arquivo     # rwxr-xr-x
+chmod u+x arquivo     # Adicionar execução para dono
+chmod -R 644 dir/     # Recursivo
+
+# Mudar dono/grupo
+chown usuario arquivo
+chown usuario:grupo arquivo
+chown -R usuario:grupo dir/
+
+# Gerenciar usuários
+useradd -m -s /bin/bash usuario   # Criar usuário
+passwd usuario                     # Definir senha
+userdel -r usuario                 # Remover usuário
+usermod -aG grupo usuario          # Adicionar a grupo
+
+# Gerenciar grupos
+groupadd grupo
+groupdel grupo
+groups usuario        # Ver grupos do usuário
+
+# Sudo
+sudo comando          # Executar como root
+sudo -u usuario cmd   # Executar como outro usuário
+visudo                # Editar sudoers
+
+# Arquivos importantes
+# /etc/passwd   - Informações de usuários
+# /etc/shadow   - Senhas criptografadas
+# /etc/group    - Grupos
+# /etc/sudoers  - Configuração sudo
+`,
+    },
+    {
+      title: 'Linux: Processos e Serviços',
+      content: `
+# Ver processos
+ps aux                  # Todos os processos
+ps aux | grep nginx     # Filtrar
+top                     # Monitor interativo
+htop                    # Monitor melhorado (se instalado)
+pgrep nginx             # PID por nome
+
+# Gerenciar processos
+kill PID                # Enviar SIGTERM
+kill -9 PID             # Forçar término (SIGKILL)
+killall nome            # Matar por nome
+pkill -f "padrao"       # Matar por padrão
+
+# Processos em background
+comando &               # Executar em background
+nohup comando &         # Continua após logout
+jobs                    # Ver jobs
+fg %1                   # Trazer para foreground
+bg %1                   # Enviar para background
+
+# Systemd (serviços)
+systemctl start nginx       # Iniciar
+systemctl stop nginx        # Parar
+systemctl restart nginx     # Reiniciar
+systemctl status nginx      # Ver status
+systemctl enable nginx      # Habilitar no boot
+systemctl disable nginx     # Desabilitar no boot
+systemctl list-units        # Listar serviços
+
+# Journald (logs do systemd)
+journalctl -u nginx         # Logs de um serviço
+journalctl -f               # Seguir logs em tempo real
+journalctl --since "1 hour ago"
+`,
+    },
+    {
+      title: 'Linux: Rede e Diagnóstico',
+      content: `
+# Informações de rede
+ip addr                 # IPs das interfaces
+ip route                # Tabela de roteamento
+ifconfig                # IPs (comando antigo)
+hostname -I             # IPs do host
+
+# Diagnóstico
+ping host               # Testar conectividade
+traceroute host         # Rastrear rota
+nslookup dominio        # Resolver DNS
+dig dominio             # DNS detalhado
+curl -I url             # Headers HTTP
+wget url                # Download
+
+# Portas e conexões
+ss -tuln                # Portas abertas
+netstat -tuln           # Portas (comando antigo)
+lsof -i :80             # Processos na porta 80
+nc -zv host 80          # Testar porta
+
+# Firewall (UFW - Ubuntu)
+ufw status              # Ver status
+ufw enable              # Ativar
+ufw allow 22/tcp        # Permitir SSH
+ufw allow 80,443/tcp    # Permitir HTTP/HTTPS
+ufw deny 3306           # Negar MySQL
+ufw delete allow 80     # Remover regra
+
+# Firewall (iptables)
+iptables -L             # Listar regras
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables-save           # Salvar regras
+`,
+    },
+    {
+      title: 'Linux: Disco e Memória',
+      content: `
+# Uso de disco
+df -h                   # Espaço em partições
+du -sh /path            # Tamanho de diretório
+du -sh * | sort -h      # Ordenar por tamanho
+ncdu /path              # Navegador interativo
+
+# Informações de memória
+free -h                 # Memória RAM
+vmstat 1 5              # Stats de VM (5 amostras)
+cat /proc/meminfo       # Detalhes de memória
+
+# Gerenciar discos
+lsblk                   # Listar dispositivos
+fdisk -l                # Listar partições
+mount /dev/sdb1 /mnt    # Montar partição
+umount /mnt             # Desmontar
+
+# Formatar e criar filesystem
+mkfs.ext4 /dev/sdb1     # Criar filesystem ext4
+mkfs.xfs /dev/sdb1      # Criar filesystem xfs
+
+# /etc/fstab - Montagem automática
+# /dev/sdb1  /data  ext4  defaults  0  2
+
+# LVM
+pvcreate /dev/sdb       # Criar physical volume
+vgcreate myvg /dev/sdb  # Criar volume group
+lvcreate -L 10G -n mylv myvg  # Criar logical volume
+lvextend -L +5G /dev/myvg/mylv  # Expandir
+
+# SWAP
+swapon -s               # Ver swap ativo
+mkswap /dev/sdc1        # Criar swap
+swapon /dev/sdc1        # Ativar swap
+`,
+    },
+    {
+      title: 'Shell Script: Fundamentos',
+      content: `
+#!/bin/bash
+# Script básico - chmod +x script.sh para executar
+
+# Variáveis
+NOME="DevOps"
+NUMERO=42
+echo "Olá, $NOME! Número: $NUMERO"
+
+# Entrada do usuário
+read -p "Digite seu nome: " USER_NAME
+echo "Bem-vindo, $USER_NAME"
+
+# Condicionais
+if [ "$NUMERO" -gt 40 ]; then
+    echo "Maior que 40"
+elif [ "$NUMERO" -eq 40 ]; then
+    echo "Igual a 40"
+else
+    echo "Menor que 40"
+fi
+
+# Comparações: -eq (igual), -ne (diferente), -gt (maior), 
+#              -lt (menor), -ge (maior ou igual), -le (menor ou igual)
+# Strings: = (igual), != (diferente), -z (vazio), -n (não vazio)
+
+# Loop for
+for i in 1 2 3 4 5; do
+    echo "Número: $i"
+done
+
+# Loop while
+CONTADOR=0
+while [ $CONTADOR -lt 5 ]; do
+    echo "Contador: $CONTADOR"
+    ((CONTADOR++))
+done
+
+# Funções
+saudar() {
+    echo "Olá, $1!"
+}
+saudar "Mundo"
+`,
+    },
+    {
+      title: 'Shell Script: Avançado',
+      content: `
+#!/bin/bash
+set -euo pipefail  # Abortar em erros, variáveis não definidas
+
+# Argumentos
+echo "Script: $0"
+echo "Primeiro arg: $1"
+echo "Todos args: $@"
+echo "Número de args: $#"
+
+# Arrays
+FRUTAS=("maçã" "banana" "laranja")
+echo "Primeira: \${FRUTAS[0]}"
+echo "Todas: \${FRUTAS[@]}"
+echo "Quantidade: \${#FRUTAS[@]}"
+
+# Substituição de comandos
+DATA=$(date +%Y-%m-%d)
+ARQUIVOS=$(ls -la)
+
+# Redirecionamento
+comando > saida.txt      # Sobrescrever
+comando >> saida.txt     # Anexar
+comando 2>&1             # stderr para stdout
+comando &> all.log       # stdout e stderr
+
+# Here document
+cat << EOF > config.txt
+Host: $HOSTNAME
+Data: $DATA
+EOF
+
+# Verificar arquivos
+[ -f arquivo ] && echo "É arquivo"
+[ -d diretorio ] && echo "É diretório"
+[ -e caminho ] && echo "Existe"
+[ -r arquivo ] && echo "Legível"
+[ -w arquivo ] && echo "Gravável"
+[ -x arquivo ] && echo "Executável"
+
+# Tratar erros
+cleanup() {
+    echo "Limpando recursos..."
+}
+trap cleanup EXIT ERR
+
+# Case
+case "$1" in
+    start) echo "Iniciando..." ;;
+    stop)  echo "Parando..." ;;
+    *)     echo "Uso: $0 {start|stop}" ;;
+esac
+`,
+    },
+    {
+      title: 'Nginx: Configuração Básica',
+      content: `
+# /etc/nginx/nginx.conf
+
+user www-data;
+worker_processes auto;
+pid /run/nginx.pid;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include /etc/nginx/mime.types;
+    default_type application/octet-stream;
+
+    # Logs
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+
+    # Otimizações
+    sendfile on;
+    tcp_nopush on;
+    tcp_nodelay on;
+    keepalive_timeout 65;
+
+    # Gzip
+    gzip on;
+    gzip_types text/plain text/css application/json application/javascript;
+
+    # Incluir configurações dos sites
+    include /etc/nginx/sites-enabled/*;
+}
+
+# Comandos:
+# nginx -t                    # Testar configuração
+# systemctl reload nginx      # Recarregar
+# systemctl restart nginx     # Reiniciar
+`,
+    },
+    {
+      title: 'Nginx: Virtual Hosts e Proxy Reverso',
+      content: `
+# /etc/nginx/sites-available/meusite.conf
+
+# Servidor HTTP (redireciona para HTTPS)
+server {
+    listen 80;
+    server_name meusite.com www.meusite.com;
+    return 301 https://$server_name$request_uri;
+}
+
+# Servidor HTTPS
+server {
+    listen 443 ssl http2;
+    server_name meusite.com www.meusite.com;
+
+    # SSL
+    ssl_certificate /etc/letsencrypt/live/meusite.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/meusite.com/privkey.pem;
+
+    # Segurança SSL
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;
+
+    # Root e index
+    root /var/www/meusite;
+    index index.html;
+
+    # Proxy reverso para API
+    location /api/ {
+        proxy_pass http://localhost:3000/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    # Arquivos estáticos
+    location ~* \\.(js|css|png|jpg|jpeg|gif|ico|svg)$ {
+        expires 1y;
+        add_header Cache-Control "public, immutable";
+    }
+}
+`,
+    },
+    {
+      title: 'Nginx: Load Balancer',
+      content: `
+# /etc/nginx/nginx.conf ou sites-available/
+
+http {
+    # Upstream - grupo de servidores
+    upstream backend {
+        # Algoritmos: round-robin (padrão), least_conn, ip_hash
+        least_conn;
+        
+        server 10.0.0.1:3000 weight=5;
+        server 10.0.0.2:3000 weight=3;
+        server 10.0.0.3:3000 backup;  # Só usa se outros falharem
+        
+        # Health checks
+        keepalive 32;
+    }
+
+    upstream websocket {
+        ip_hash;  # Mantém sessão no mesmo servidor
+        server 10.0.0.1:8080;
+        server 10.0.0.2:8080;
+    }
+
+    server {
+        listen 80;
+        server_name api.exemplo.com;
+
+        location / {
+            proxy_pass http://backend;
+            proxy_http_version 1.1;
+            proxy_set_header Connection "";
+            
+            # Timeout e retry
+            proxy_connect_timeout 5s;
+            proxy_read_timeout 60s;
+            proxy_next_upstream error timeout http_500;
+        }
+
+        location /ws {
+            proxy_pass http://websocket;
+            proxy_http_version 1.1;
+            proxy_set_header Upgrade $http_upgrade;
+            proxy_set_header Connection "upgrade";
+        }
+    }
+}
+`,
+    },
+    {
+      title: 'Jenkins: Pipeline Declarativo',
+      content: `
+// Jenkinsfile
+pipeline {
+    agent any
+    
+    environment {
+        DOCKER_IMAGE = 'minha-app'
+        REGISTRY = 'registry.exemplo.com'
+    }
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        
+        stage('Build') {
+            steps {
+                sh 'npm ci'
+                sh 'npm run build'
+            }
+        }
+        
+        stage('Test') {
+            steps {
+                sh 'npm test'
+            }
+            post {
+                always {
+                    junit 'reports/*.xml'
+                }
+            }
+        }
+        
+        stage('Docker Build') {
+            steps {
+                script {
+                    docker.build("\${REGISTRY}/\${DOCKER_IMAGE}:\${BUILD_NUMBER}")
+                }
+            }
+        }
+        
+        stage('Deploy') {
+            when {
+                branch 'main'
+            }
+            steps {
+                sh 'kubectl apply -f k8s/'
+            }
+        }
+    }
+    
+    post {
+        success {
+            slackSend channel: '#deploys', message: "Build #\${BUILD_NUMBER} succeeded"
+        }
+        failure {
+            slackSend channel: '#deploys', message: "Build #\${BUILD_NUMBER} failed"
+        }
+    }
+}
+`,
+    },
+    {
+      title: 'GitHub Actions: Deploy para AWS',
+      content: `
+# .github/workflows/deploy.yml
+name: Deploy to AWS
+
+on:
+  push:
+    branches: [main]
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: minha-app
+  ECS_CLUSTER: meu-cluster
+  ECS_SERVICE: minha-app-service
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-access-key-id: \${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: \${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: \${{ env.AWS_REGION }}
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
+
+    - name: Build and push Docker image
+      env:
+        ECR_REGISTRY: \${{ steps.login-ecr.outputs.registry }}
+        IMAGE_TAG: \${{ github.sha }}
+      run: |
+        docker build -t \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG .
+        docker push \$ECR_REGISTRY/\$ECR_REPOSITORY:\$IMAGE_TAG
+
+    - name: Deploy to ECS
+      run: |
+        aws ecs update-service \\
+          --cluster \$ECS_CLUSTER \\
+          --service \$ECS_SERVICE \\
+          --force-new-deployment
+`,
+    },
+    {
+      title: 'GitHub Actions: CI/CD Completo',
+      content: `
+# .github/workflows/ci-cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linter
+      run: npm run lint
+    
+    - name: Run tests
+      run: npm test
+      env:
+        DATABASE_URL: postgres://postgres:postgres@localhost:5432/test
+
+    - name: Upload coverage
+      uses: codecov/codecov-action@v3
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Build Docker image
+      run: docker build -t minha-app:\${{ github.sha }} .
+    
+    - name: Push to registry
+      run: |
+        echo \${{ secrets.DOCKER_PASSWORD }} | docker login -u \${{ secrets.DOCKER_USERNAME }} --password-stdin
+        docker push minha-app:\${{ github.sha }}
+`,
+    },
+    {
+      title: 'Prometheus: Configuração Básica',
+      content: `
+# prometheus.yml
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+rule_files:
+  - "alerts/*.yml"
+
+scrape_configs:
+  # Prometheus próprio
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node Exporter (métricas do sistema)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Aplicações
+  - job_name: 'app'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['app:8080']
+
+  # Kubernetes Service Discovery
+  - job_name: 'kubernetes-pods'
+    kubernetes_sd_configs:
+      - role: pod
+    relabel_configs:
+      - source_labels: [__meta_kubernetes_pod_annotation_prometheus_io_scrape]
+        action: keep
+        regex: true
+
+# Iniciar com Docker:
+# docker run -d -p 9090:9090 \\
+#   -v /path/prometheus.yml:/etc/prometheus/prometheus.yml \\
+#   prom/prometheus
+`,
+    },
+    {
+      title: 'Grafana: Dashboard JSON',
+      content: `
+// Exemplo de painel para Grafana
+// Importar em: + > Import > Paste JSON
+{
+  "title": "Application Metrics",
+  "panels": [
+    {
+      "title": "Request Rate",
+      "type": "graph",
+      "targets": [
+        {
+          "expr": "rate(http_requests_total[5m])",
+          "legendFormat": "{{method}} {{path}}"
+        }
+      ]
+    },
+    {
+      "title": "Error Rate",
+      "type": "stat",
+      "targets": [
+        {
+          "expr": "sum(rate(http_requests_total{status=~\"5..\"}[5m])) / sum(rate(http_requests_total[5m])) * 100"
+        }
+      ]
+    },
+    {
+      "title": "Response Time P99",
+      "type": "gauge",
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.99, rate(http_request_duration_seconds_bucket[5m]))"
+        }
+      ]
+    }
+  ]
+}
+
+// PromQL úteis:
+// rate(metric[5m])           - Taxa por segundo
+// increase(metric[1h])       - Aumento no período
+// sum by (label) (metric)    - Agrupar
+// histogram_quantile(0.95, rate(histogram_bucket[5m]))  - Percentil
+`,
+    },
+    {
+      title: 'ELK Stack: Logstash Pipeline',
+      content: `
+# /etc/logstash/conf.d/pipeline.conf
+
+input {
+  # Receber logs via Beats
+  beats {
+    port => 5044
+  }
+  
+  # Ou via arquivo
+  file {
+    path => "/var/log/app/*.log"
+    start_position => "beginning"
+    codec => json
+  }
+}
+
+filter {
+  # Parse de logs JSON
+  if [message] =~ /^{/ {
+    json {
+      source => "message"
+    }
+  }
+  
+  # Parse de logs Apache/Nginx
+  if [type] == "nginx" {
+    grok {
+      match => { "message" => "%{COMBINEDAPACHELOG}" }
+    }
+  }
+  
+  # Adicionar geolocalização
+  if [clientip] {
+    geoip {
+      source => "clientip"
+    }
+  }
+  
+  # Parse de timestamp
+  date {
+    match => [ "timestamp", "ISO8601", "yyyy-MM-dd HH:mm:ss" ]
+    target => "@timestamp"
+  }
+  
+  # Remover campos desnecessários
+  mutate {
+    remove_field => ["host", "agent"]
+  }
+}
+
+output {
+  elasticsearch {
+    hosts => ["elasticsearch:9200"]
+    index => "logs-%{+YYYY.MM.dd}"
+  }
+}
+`,
+    },
+    {
+      title: 'AWS CLI: Comandos Essenciais',
+      content: `
+# Configuração
+aws configure                    # Configurar credenciais
+aws configure --profile prod     # Perfil específico
+export AWS_PROFILE=prod          # Usar perfil
+
+# EC2
+aws ec2 describe-instances
+aws ec2 start-instances --instance-ids i-1234567890
+aws ec2 stop-instances --instance-ids i-1234567890
+aws ec2 run-instances \\
+  --image-id ami-12345678 \\
+  --instance-type t3.micro \\
+  --key-name minha-chave
+
+# S3
+aws s3 ls                        # Listar buckets
+aws s3 ls s3://meu-bucket/       # Listar conteúdo
+aws s3 cp arquivo.txt s3://meu-bucket/
+aws s3 sync ./pasta s3://meu-bucket/pasta
+aws s3 rm s3://meu-bucket/arquivo.txt
+
+# ECS
+aws ecs list-clusters
+aws ecs list-services --cluster meu-cluster
+aws ecs update-service --cluster meu-cluster --service meu-servico --force-new-deployment
+
+# Lambda
+aws lambda list-functions
+aws lambda invoke --function-name minha-funcao output.txt
+
+# CloudWatch
+aws logs describe-log-groups
+aws logs tail /aws/lambda/minha-funcao --follow
+
+# Secrets Manager
+aws secretsmanager get-secret-value --secret-id meu-segredo
+`,
+    },
+    {
+      title: "SSL/TLS: Certbot e Let's Encrypt",
+      content: `
+# Instalar Certbot
+sudo apt install certbot python3-certbot-nginx
+
+# Obter certificado para Nginx
+sudo certbot --nginx -d meusite.com -d www.meusite.com
+
+# Obter certificado standalone
+sudo certbot certonly --standalone -d meusite.com
+
+# Obter certificado com DNS challenge (wildcard)
+sudo certbot certonly --manual --preferred-challenges dns -d "*.meusite.com"
+
+# Renovar certificados
+sudo certbot renew                    # Renovar todos
+sudo certbot renew --dry-run          # Testar renovação
+
+# Configurar renovação automática (cron)
+# 0 0,12 * * * certbot renew --quiet
+
+# Verificar certificados
+sudo certbot certificates
+
+# Revogar certificado
+sudo certbot revoke --cert-path /etc/letsencrypt/live/meusite.com/cert.pem
+
+# Arquivos de certificado
+# /etc/letsencrypt/live/meusite.com/
+#   fullchain.pem   - Certificado + intermediários
+#   privkey.pem     - Chave privada
+#   cert.pem        - Certificado apenas
+#   chain.pem       - Intermediários
+
+# Verificar SSL com OpenSSL
+openssl s_client -connect meusite.com:443
+openssl x509 -in cert.pem -text -noout
+`,
+    },
+    {
+      title: 'SSH: Configuração e Túneis',
+      content: `
+# Gerar chave SSH
+ssh-keygen -t ed25519 -C "email@exemplo.com"
+ssh-keygen -t rsa -b 4096 -C "email@exemplo.com"
+
+# Copiar chave pública para servidor
+ssh-copy-id usuario@servidor
+
+# Conectar
+ssh usuario@servidor
+ssh -p 2222 usuario@servidor        # Porta diferente
+ssh -i ~/.ssh/chave_privada usuario@servidor
+
+# ~/.ssh/config - Simplificar conexões
+Host meuserver
+    HostName 192.168.1.100
+    User admin
+    Port 22
+    IdentityFile ~/.ssh/minha_chave
+    
+Host producao
+    HostName prod.exemplo.com
+    User deploy
+    ProxyJump bastion
+
+# Uso: ssh meuserver
+
+# Túnel SSH (port forwarding)
+# Local: acesso local -> servidor remoto
+ssh -L 8080:localhost:80 usuario@servidor
+# Acessar localhost:8080 redireciona para servidor:80
+
+# Remoto: acesso externo -> máquina local
+ssh -R 9000:localhost:3000 usuario@servidor
+# Acessar servidor:9000 redireciona para local:3000
+
+# Dinâmico (SOCKS proxy)
+ssh -D 1080 usuario@servidor
+
+# SCP - Copiar arquivos
+scp arquivo.txt usuario@servidor:/destino/
+scp -r pasta/ usuario@servidor:/destino/
+scp usuario@servidor:/origem/arquivo.txt ./
+`,
+    },
+    {
+      title: 'Helm: Gerenciamento de Charts',
+      content: `
+# Helm - Gerenciador de pacotes para Kubernetes
+
+# Adicionar repositório
+helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo update
+
+# Buscar charts
+helm search repo nginx
+helm search hub wordpress
+
+# Instalar chart
+helm install meu-nginx bitnami/nginx
+helm install meu-app ./meu-chart -f values.yaml
+
+# Listar releases
+helm list
+helm list -A  # Todos namespaces
+
+# Atualizar release
+helm upgrade meu-nginx bitnami/nginx
+helm upgrade meu-app ./meu-chart -f values-prod.yaml
+
+# Rollback
+helm rollback meu-nginx 1
+
+# Desinstalar
+helm uninstall meu-nginx
+
+# Criar chart
+helm create meu-chart
+
+# Estrutura do chart:
+# meu-chart/
+#   Chart.yaml        # Metadados
+#   values.yaml       # Valores padrão
+#   templates/        # Templates Kubernetes
+#     deployment.yaml
+#     service.yaml
+#     ingress.yaml
+#   charts/           # Dependências
+
+# Validar chart
+helm lint ./meu-chart
+helm template meu-app ./meu-chart  # Renderizar templates
+
+# Empacotar
+helm package ./meu-chart
+`,
+    },
+    {
+      title: 'ArgoCD: GitOps Deployment',
+      content: `
+# Instalar ArgoCD
+kubectl create namespace argocd
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+
+# Acessar UI
+kubectl port-forward svc/argocd-server -n argocd 8080:443
+
+# Obter senha inicial
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d
+
+# Application YAML
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: minha-app
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/meu-org/meu-repo.git
+    targetRevision: HEAD
+    path: k8s/overlays/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: production
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+    - CreateNamespace=true
+
+# CLI
+argocd login localhost:8080
+argocd app list
+argocd app sync minha-app
+argocd app get minha-app
+argocd app history minha-app
+argocd app rollback minha-app 1
+`,
+    },
+    {
+      title: 'Vault: Gerenciamento de Segredos',
+      content: `
+# HashiCorp Vault - Gerenciamento seguro de segredos
+
+# Iniciar servidor dev
+vault server -dev
+
+# Configurar endereço
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_TOKEN='root-token'
+
+# Login
+vault login token=meu-token
+
+# Secrets KV (Key-Value)
+vault kv put secret/minha-app/config \\
+  db_password=senha123 \\
+  api_key=chave-secreta
+
+vault kv get secret/minha-app/config
+vault kv get -field=db_password secret/minha-app/config
+
+# Políticas
+vault policy write app-policy - <<EOF
+path "secret/data/minha-app/*" {
+  capabilities = ["read"]
+}
+EOF
+
+# Autenticação por token
+vault token create -policy=app-policy
+
+# Autenticação Kubernetes
+vault auth enable kubernetes
+vault write auth/kubernetes/config \\
+  kubernetes_host="https://kubernetes.default.svc"
+
+vault write auth/kubernetes/role/minha-app \\
+  bound_service_account_names=minha-app \\
+  bound_service_account_namespaces=default \\
+  policies=app-policy \\
+  ttl=1h
+
+# Injetor de segredos (annotations no Pod)
+# vault.hashicorp.com/agent-inject: "true"
+# vault.hashicorp.com/agent-inject-secret-config: "secret/data/minha-app/config"
+`,
     }
   ],
   "Banco de Dados": [
